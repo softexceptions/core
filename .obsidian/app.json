@@ -1,0 +1,24 @@
+{
+  "enableCli": true,
+  "baseTheme": "dark",
+  "showLineNumber": true,
+  "showFrontmatter": false,
+  "strictLineBreaks": false,
+  "tabSize": 2,
+  "useTab": false,
+  "transliterate": false,
+  "promptDelete": true,
+  "alwaysUpdateLinks": true,
+  "obsidianCacheSize": 10,
+  "longLineBreak": false,
+  "readableLineLength": true,
+  "defaultViewMode": "markdown",
+  "trashOption": "local",
+  "attachmentFolderPath": "07 Anhänge",
+  "pdfExportSettings": {
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  }
+}

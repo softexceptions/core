@@ -1,0 +1,24 @@
+{
+  "id": "conv-1777294684288-agupbl6wp",
+  "providerId": "claude",
+  "title": "Hallo! Deine Anfrage ist unvollständig. Du schr...",
+  "titleGenerationStatus": "success",
+  "createdAt": 1777294684303,
+  "updatedAt": 1778010466941,
+  "lastResponseAt": 1777318991771,
+  "sessionId": "a0dbea1d-fe96-4743-8bf3-47d740b86575",
+  "providerState": {
+    "providerSessionId": "a0dbea1d-fe96-4743-8bf3-47d740b86575"
+  },
+  "currentNote": "Willkommen.md",
+  "usage": {
+    "model": "haiku",
+    "inputTokens": 8,
+    "cacheCreationInputTokens": 1825,
+    "cacheReadInputTokens": 107524,
+    "contextWindow": 200000,
+    "contextTokens": 109357,
+    "percentage": 55,
+    "contextWindowIsAuthoritative": true
+  }
+}
