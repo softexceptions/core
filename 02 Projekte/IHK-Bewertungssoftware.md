@@ -16,6 +16,9 @@ Ein robustes, erweiterbares Assistenzsystem entwickeln, das die Bewertung komple
 
 Größtenteils fertig, soll erweiterbar sein.
 
+# Link
+
+[IHK-Bewertung](https://ihkmatrix.softexceptions.com)
 ## Nächste Schritte
 
 - [ ] Architektur mit SOLID-Prinzipien überprüfen

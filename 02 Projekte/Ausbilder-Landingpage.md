@@ -16,6 +16,10 @@ Brücke zwischen Schule und Betrieb schaffen. Ausbildern zeigen, wie die schulis
 
 Größtenteils fertig, soll erweiterbar sein.
 
+# Link
+
+[AusbilderInfo](https://lernfeld.softexceptions.com/)
+
 ## Nächste Schritte
 
 - [ ] Feedback von Ausbildern einholen

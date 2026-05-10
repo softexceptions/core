@@ -15,6 +15,9 @@ Zugängliche, informative Landingpage aufbauen, die die Energierevolution verst�
 ## Status
 
 Zunächst abgeschlossen. Kann erweitert werden.
+# Link
+
+[Die Energie Revolution](https://energie.softexceptions.com)
 
 ## Nächste Schritte
 

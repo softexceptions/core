@@ -128,6 +128,10 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 > `sites-enabled/default` Symlink muss entfernt werden — sonst fängt der Default-Server alle Requests ab.
 > `redirect_slashes=False` in `main.py` verhindert Redirect-Loop beim API-Proxy.
 
+# Link
+
+[Schulordnung]()https://ordnung.softexceptions.com/
+
 ## Letzte Änderungen (2026-05-05)
 
 - **Navigation — Quiz durch Wenn? ersetzt:** Der `Quiz`-Button war redundant (Quiz ist bereits als Quicklink-Karte erreichbar). Ersetzt durch `🎯 Wenn?` → springt zur WhatIfSection (`id="whatif"`). Reihenfolge: Start | Wichtig | **Wenn?** | Regeln | Fragen | 🌙
