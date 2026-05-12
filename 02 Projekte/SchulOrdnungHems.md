@@ -105,7 +105,7 @@ http://192.168.2.45:5173/    (mit --host Flag)
 - [x] Nginx + Python3 + venv installiert (Debian 13)
 - [x] Frontend gebaut (`npm run build`) und nach `/var/www/schulordnung/` übertragen
 - [x] Backend nach `/opt/schulordnung/` übertragen, venv + Dependencies installiert
-- [x] systemd-Service `schulordnung-backend` → uvicorn auf Port 8000
+- [x] systemd-Service `schulordnung-backend` → gunicorn -w 4 + UvicornWorker auf Port 8000
 - [x] Nginx konfiguriert: statische Dateien + `/api/`-Proxy zu FastAPI
 - [x] App läuft unter **http://192.168.2.242:8080**
 - [x] Frontend-Services (Quiz, Chatbot) auf echte API-Aufrufe umgestellt
@@ -131,6 +131,15 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 # Link
 
 [Schulordnung]()https://ordnung.softexceptions.com/
+
+## Letzte Änderungen (2026-05-12)
+
+- **Quiz — Error-Handling ergänzt:** `useQuiz.ts` hatte kein `try/catch` in `submit()` — bei API-Fehlern passierte nichts (stilles Versagen). Ergänzt: `isSubmitting`-State (Button wird während des Calls deaktiviert), `submitError`-State (Fehlermeldung im UI), `try/catch/finally`-Block
+- **QuizSection.vue — Lade-Spinner + Fehlermeldung:** "Auswerten"-Button zeigt während des Submits einen Spinner und ist deaktiviert; bei Fehler erscheint eine rote Meldung unterhalb der Navigation
+- **Backend — Gunicorn mit 4 Workern:** systemd-Service von `uvicorn` (1 Worker) auf `gunicorn -w 4 -k uvicorn.workers.UvicornWorker` umgestellt → 1 Master + 4 Worker-Prozesse für echte Parallelität bei Gleichzeitig-Zugriff
+
+> [!info] Hintergrund
+> Beim Lehrer-Test (Gesamtkonferenz, ~40 Personen gleichzeitig) hat der "Auswerten"-Button bei manchen nicht reagiert. Ursache: fehlendes Error-Handling im Frontend + einzelner uvicorn-Worker. Lasttest mit `ab -n 40 -c 40` nach dem Fix: 0 Failed requests, längster Request 15ms.
 
 ## Letzte Änderungen (2026-05-05)
 
