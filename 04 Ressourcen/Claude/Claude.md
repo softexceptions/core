@@ -38,6 +38,26 @@ Claude ist ein großes Sprachmodell (LLM), das ich für verschiedenste Entwicklu
 - [[Prompt-Engineering]] — Best Practices
 - [[03 Bereiche/Unterricht/Schüler-Onboarding|Schüler-Onboarding]] — Wie man anfängt
 
+## Neues Projekt starten
+
+1. Projektordner anlegen: `/home/norbert/Code/[Projektname]`
+2. Symlink anlegen: `ln -s /home/norbert/Dokumente/core core`
+3. `04 Ressourcen/Claude/Projektvorlage.md` kopieren → `02 Projekte/[Projektname].md`
+4. Vorlage ausfüllen: Ziel, Stack, Architektur, Agent-Team, Skills, Start-Befehle
+5. Erste Aufgaben unter `## Nächste Aufgaben` eintragen
+6. Claude Code starten + `/init` ausführen → `CLAUDE.md` wird generiert
+7. In die generierte `CLAUDE.md` eintragen:
+   ```
+   Projektbeschreibung: core/02 Projekte/[Projektname].md
+   ```
+
+> [!important] Reihenfolge beachten
+> Vorlage **vor** dem ersten Claude-Start ausfüllen — sonst fehlt mir der Projektkontext beim Start.
+
+> [!tip] Aufgaben-Format
+> Jede Aufgabe braucht drei Teile damit ich autonom arbeiten kann:
+> `**Aufgabe:** Was — **Kontext:** Warum — **Ergebnis:** Was soll anders sein`
+
 ## Meine Erkenntnisse
 
 -

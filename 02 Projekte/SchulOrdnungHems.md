@@ -107,12 +107,12 @@ http://192.168.2.45:5173/    (mit --host Flag)
 - [x] Backend nach `/opt/schulordnung/` übertragen, venv + Dependencies installiert
 - [x] systemd-Service `schulordnung-backend` → gunicorn -w 4 + UvicornWorker auf Port 8000
 - [x] Nginx konfiguriert: statische Dateien + `/api/`-Proxy zu FastAPI
-- [x] App läuft unter **http://192.168.2.242:8080**
+- [x] App läuft unter **http://192.168.2.242:8125**
 - [x] Frontend-Services (Quiz, Chatbot) auf echte API-Aufrufe umgestellt
 
 ### Workflow-Hinweis
 
-> [!important] Norbert schaut die App immer auf dem LXC-Container an (http://192.168.2.242:8080)
+> [!important] Norbert schaut die App immer auf dem LXC-Container an (http://192.168.2.242:8125)
 > Der Dev-Server (localhost:5173) ist für ihn nicht relevant. Änderungen werden erst nach Build + Deploy sichtbar.
 
 ### Deploy-Befehl (Frontend)
