@@ -1,7 +1,7 @@
 {
   "enableCli": true,
   "baseTheme": "dark",
-  "showLineNumber": true,
+  "showLineNumber": false,
   "showFrontmatter": false,
   "strictLineBreaks": false,
   "tabSize": 2,

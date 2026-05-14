@@ -12,11 +12,9 @@ Excalidraw-Diagramm zur Visualisierung des MQTT-Bridge-Setups zwischen Cerbo GX 
 
 Das Diagramm macht das Konzept der MQTT-Bridge-Konfiguration (`mosquitto.conf`) visuell verständlich: warum die Bridge standardmäßig eine Einbahnstraße ist und wie der Rückkanal via `topic R/# out 0` explizit geöffnet werden muss.
 
-## Datei
+## Diagramm
 
-```
-/home/norbert/Code/excalidraw_Claude/mqtt-bridge-setup.excalidraw
-```
+![[Excalidraw/mqtt-bridge-setup.excalidraw]]
 
 ## Inhalt
 

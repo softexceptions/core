@@ -19,6 +19,3 @@ Wirf hier alles rein was dir einfällt. Ideen, Links, Gedanken, To-Dos. Ich sort
 ## 📝 LLM Knowledge Bases
 Andrej Karpathy
 [Knowlage Bases](https://x.com/karpathy/status/2039805659525644595)
--
-## 📝 Neuer Eintrag
-[^1]: 
