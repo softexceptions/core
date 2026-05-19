@@ -26,15 +26,15 @@ Interaktive, mobile-first Landing Page für die Schulordnung der [[Heinrich-Eman
 
 ## Farbpalette (aus HEMS_Bild.webp)
 
-| Token | Hex | Bedeutung |
-|---|---|---|
-| `hems-navy` | `#1a1d21` | Anthrazit-Schwarz (Metallfassade) |
-| `hems-blue` | `#2d6fa8` | Stahlblau — Primär-Akzent |
-| `hems-sky` | `#6aadc8` | Hellblau (Himmel im Glas) |
-| `hems-steel` | `#4a6070` | Stahlgrau — Sekundär-Akzent |
-| `hems-glass` | `#8da8b8` | Glasgrau (Spiegelton) |
-| `hems-bg` | `#f0f3f5` | Kühles Silberweiß |
-| `hems-muted` | `#68808c` | Kühles Grau |
+| Token        | Hex       | Bedeutung                         |
+| ------------ | --------- | --------------------------------- |
+| `hems-navy`  | `#1a1d21` | Anthrazit-Schwarz (Metallfassade) |
+| `hems-blue`  | `#2d6fa8` | Stahlblau — Primär-Akzent         |
+| `hems-sky`   | `#6aadc8` | Hellblau (Himmel im Glas)         |
+| `hems-steel` | `#4a6070` | Stahlgrau — Sekundär-Akzent       |
+| `hems-glass` | `#8da8b8` | Glasgrau (Spiegelton)             |
+| `hems-bg`    | `#f0f3f5` | Kühles Silberweiß                 |
+| `hems-muted` | `#68808c` | Kühles Grau                       |
 
 ## Frontend-Architektur (SOLID)
 
