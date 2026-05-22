@@ -22,7 +22,7 @@ core/.claude/skills/vue-solid/skill.md
 
 **Symlink für ein neues Projekt:**
 
-```bash
+```
 ln -s /home/norbert/Code/ipNINX/core/.claude/skills/vue-solid \
       /pfad/zum/projekt/.claude/skills/vue-solid
 ```

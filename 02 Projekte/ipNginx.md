@@ -1,6 +1,6 @@
 ---
 tags: [projekt, python, fastapi, nginx, vue, ki-entwicklung]
-status: aktiv
+status: in-progress
 date: 2026-05-07
 ---
 

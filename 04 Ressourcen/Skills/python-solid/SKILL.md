@@ -22,7 +22,7 @@ core/.claude/skills/python-solid/skill.md
 
 **Symlink für ein neues Projekt:**
 
-```bash
+```
 ln -s /home/norbert/Code/ipNINX/core/.claude/skills/python-solid \
       /pfad/zum/projekt/.claude/skills/python-solid
 ```

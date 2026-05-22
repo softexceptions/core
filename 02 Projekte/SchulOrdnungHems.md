@@ -5,8 +5,10 @@ tags:
   - vue
   - fastapi
   - aktiv
-status: in-progress
+status: aktiv
 stand: 2026-05-04
+deployed: true
+url: https://ordnung.softexceptions.com
 ---
 
 # SchulOrdnungHems
@@ -74,18 +76,18 @@ src/data/schulordnung.ts      → 13 Abschnitte, 8 Szenarien, 7 Quiz-Fragen, 10 
 ## Start-Befehle
 
 **Frontend** (Port 5173):
-```bash
+```
 cd frontend
 npm run dev
 ```
 
 Mit Netzwerkzugriff für andere Geräte im LAN:
-```bash
+```
 npm run dev -- --host
 ```
 
 **Backend** (Port 8000):
-```bash
+```
 cd backend
 uvicorn main:app --reload
 ```
@@ -117,7 +119,7 @@ http://192.168.2.45:5173/    (mit --host Flag)
 
 ### Deploy-Befehl (Frontend)
 
-```bash
+```
 cd /home/norbert/Code/SchulOrdnungHems/frontend && npm run build
 scp -r /home/norbert/Code/SchulOrdnungHems/frontend/dist/* root@192.168.2.242:/var/www/schulordnung/
 ```
@@ -130,7 +132,7 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 
 # Link
 
-[Schulordnung]()https://ordnung.softexceptions.com/
+[Schulordnung](https://ordnung.softexceptions.com/)
 
 ## Letzte Änderungen (2026-05-12)
 
@@ -158,6 +160,10 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 - **Quicklinks:** Beim Schließen einer fokussierten Regelkarte → Scroll zurück zu Quicklinks
 - **Backend-Fix:** q6 + q7 fehlten in `schulordnung_data.py` — ergänzt
 - **CORS:** `http://192.168.2.242` zu erlaubten Origins hinzugefügt
+
+## Ressourcen
+
+- [[../04 Ressourcen/Git|Git]] — Aliasse, nützliche Befehle
 
 ## Claude-Verhaltensregeln
 

@@ -37,7 +37,7 @@ core/.claude/agents/backend-agent.md
 
 **Symlink für ein neues Projekt:**
 
-```bash
+```
 ln -s /home/norbert/Code/ipNINX/core/.claude/agents/backend-agent.md \
       /pfad/zum/projekt/.claude/agents/backend-agent.md
 ```

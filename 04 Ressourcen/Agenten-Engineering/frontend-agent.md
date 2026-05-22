@@ -39,7 +39,7 @@ core/.claude/agents/frontend-agent.md
 
 **Symlink für ein neues Projekt anlegen:**
 
-```bash
+```
 ln -s /home/norbert/Code/ipNINX/core/.claude/agents/frontend-agent.md \
       /pfad/zum/projekt/.claude/agents/frontend-agent.md
 ```

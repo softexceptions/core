@@ -29,6 +29,7 @@ Dieser Bereich umfasst alles rund um die Entwicklung von Software mit modernen K
 - [[02 Projekte/Ausbilder-Landingpage|Ausbilder-Landingpage]]
 - [[02 Projekte/ipNginx|ipNginx]]
 - [[02 Projekte/SchulOrdnungHems|SchulOrdnungHems]]
+- [[02 Projekte/SchutzkonzeptHems|SchutzkonzeptHems]]
 
 ## Ressourcen
 

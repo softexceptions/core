@@ -2,6 +2,8 @@
 tags: [projekt]
 status: aktiv
 erstellt: 2026-04-27
+deployed: true
+url: https://energie.softexceptions.com
 ---
 
 # Energielandingpage

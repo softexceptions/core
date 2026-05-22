@@ -11,7 +11,7 @@ Unterrichtsbeispiel: Warum jeder `async`-API-Call ein `try/catch/finally` brauch
 > [!warning] Silent Failure
 > Wenn ein `await`-Aufruf fehlschlägt und kein `catch`-Block vorhanden ist, passiert **nichts** — kein Fehler, kein Feedback, der UI bleibt einfach hängen.
 
-**Reales Beispiel aus dem Unterricht:** Bei der HEMS-Gesamtkonferenz (~40 Personen gleichzeitig) hat der "Auswerten"-Button im Quiz nicht reagiert — weil `submit()` keinen `catch`-Block hatte. Kein User wusste, ob er nochmal klicken soll.
+**Reales Beispiel aus dem Unterricht:** Bei der [[Heinrich-Emanuel-Merck-Schule|HEMS]]-Gesamtkonferenz (~40 Personen gleichzeitig) hat der "Auswerten"-Button im Quiz nicht reagiert — weil `submit()` keinen `catch`-Block hatte. Kein User wusste, ob er nochmal klicken soll.
 
 ## ❌ Vorher — Stilles Versagen
 

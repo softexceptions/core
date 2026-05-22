@@ -1,13 +1,11 @@
 ---
-title:
-  - SchulkonzeptHems
+title: SchutzkonzeptHems
 tags:
   - projekt
   - aktiv
   - vue
-status: in-progress
-stand:
-  - 2026-05-19
+status: aktiv
+stand: 2026-05-20
 deployed: true
 url: https://schutz.softexceptions.com
 ---
@@ -17,7 +15,7 @@ url: https://schutz.softexceptions.com
 > [!info] Ziel
 > Eine responsive, barrierefreie Web-Seite, die das gesetzlich vorgeschriebene Schutzkonzept der Heinrich-Emanuel-Merck-Schule Darmstadt als "lebendes Dokument" abbildet. Lehrkräfte finden klare Navigation, Handlungsanleitungen und Kontakte — auf Mobilgeräten genauso wie am Desktop.
 
-Landing Page für das **Schutzkonzept gegen Gewalt und sexuellen Missbrauch** der HEMS Darmstadt. Das Konzept ist gesetzlich vorgeschrieben (Abgabe bis Sommer 2026) und soll Lehrkräften Orientierung und konkrete Handlungsmöglichkeiten geben. Inhalte basieren auf `Schutzkonzept_HEMS_03-05-26-v2.pdf`.
+Landing Page für das **Schutzkonzept gegen Gewalt und sexuellen Missbrauch** der [[Heinrich-Emanuel-Merck-Schule|HEMS]] Darmstadt. Das Konzept ist gesetzlich vorgeschrieben (Abgabe bis Sommer 2026) und soll Lehrkräften Orientierung und konkrete Handlungsmöglichkeiten geben. Inhalte basieren auf `Schutzkonzept_HEMS_03-05-26-v2.pdf`.
 
 ## Farbpalette (aus HEMS_Bild.webp)
 
@@ -45,7 +43,7 @@ Landing Page für das **Schutzkonzept gegen Gewalt und sexuellen Missbrauch** de
 
 ## Architektur
 
-SOLID-Schichten gemäß [[vue-solid]]-Skill:
+SOLID-Schichten gemäß [[vue-solid/SKILL|vue-solid]]-Skill:
 
 ```
 src/
@@ -154,7 +152,7 @@ Nur für die **Service-Schicht** — Komponenten werden visuell geprüft.
 - [x] Nginx-Konfiguration für Audio-Streaming auf Proxmox LXC
 
 > [!info] Nginx für Audio-Streaming (Proxmox LXC)
-> ```nginx
+> ```
 > location /audio/ {
 >     add_header Accept-Ranges bytes always;
 >     gzip off;
@@ -163,6 +161,23 @@ Nur für die **Service-Schicht** — Komponenten werden visuell geprüft.
 >     tcp_nopush on;
 > }
 > ```
+
+### Phase 2c — PWA (geplant, noch nicht bauen)
+
+Hintergrund: Die App erscheint auf Android in der Akku-Liste, weil sie per „Zum Startbildschirm hinzufügen" als Chrome-Shortcut installiert wurde. Eine echte PWA würde als WebAPK installiert, das Android effizienter managed.
+
+**Was nötig wäre (~2–3 Stunden):**
+- `public/manifest.json` mit `name`, `short_name`, `start_url`, `display: standalone`, `theme_color: "#2d6fa8"`, Icons (192×192 + 512×512 PNG)
+- Service Worker (mindestens Cache-first für statische Assets)
+- `<link rel="manifest" href="/manifest.json">` in `index.html`
+
+**Installationsablauf für Lehrkräfte nach der Umsetzung:**
+1. Alten Shortcut vom Startbildschirm entfernen
+2. `schutz.softexceptions.com` in Chrome öffnen
+3. Banner „App installieren" antippen — oder Menü (⋮) → „App installieren"
+4. Chrome lädt einmalig einen WebAPK vom Google-Server (braucht Internet)
+
+**Warum noch nicht:** Für eine statische Schul-Infoseite kein dringender Mehrwert — keine Offline-Funktion nötig, keine Push-Notifications. Die Batterie-Fixes (preload="none" + GPU-Compositing) decken den tatsächlichen Verbrauch ab. PWA lohnt sich, wenn Lehrkräfte konkret über Akku-Probleme klagen.
 
 ### Phase 2b — REST-API + Audio (geplant, noch nicht bauen)
 
@@ -196,7 +211,7 @@ Nur für die **Service-Schicht** — Komponenten werden visuell geprüft.
 
 ## Start-Befehl
 
-```bash
+```
 cd /home/norbert/Code/Schutzkonzept_HEMS
 npm run dev     # → http://localhost:5173 (lokal) + http://192.168.2.45:5173 (Netzwerk/Handy)
                 # Port kann nach Neustart wechseln → mit `ss -tlnp | grep 517` prüfen
@@ -212,14 +227,14 @@ npm run build   # → dist/
 ### Lokal → GitHub → LXC (Standard-Workflow)
 
 **1. Lokal committen und pushen:**
-```bash
+```
 git add .
 git commit -m "feat: Beschreibung der Änderung"
 git push -u origin main
 ```
 
 **2. Auf dem LXC deployen** (SSH zu `root@192.168.2.79`):
-```bash
+```
 cd /var/www/Schutzkonzept_HEMS
 git pull
 npm run build
@@ -230,13 +245,13 @@ Das war's — nginx serviert automatisch das neue `dist/`.
 ### 3. Nginx auf dem Proxmox LXC
 
 **Installation (Debian/Ubuntu LXC):**
-```bash
+```
 apt update && apt install nginx -y
 ```
 
 **Konfigurationsdatei** `/etc/nginx/sites-available/schutzkonzept`:
 
-```nginx
+```
 server {
     listen 80;
     server_name _;                        # oder konkrete IP / Domain
@@ -279,7 +294,7 @@ server {
 ```
 
 **Aktivieren und starten:**
-```bash
+```
 ln -s /etc/nginx/sites-available/schutzkonzept /etc/nginx/sites-enabled/
 nginx -t                                  # Konfiguration testen
 systemctl reload nginx
@@ -303,6 +318,16 @@ systemctl reload nginx
 > Keine externen Ressourcen ohne Einwilligung — Fonts und Assets self-hosted.
 
 ## Changelog
+
+### 2026-05-20 (Session 9)
+
+- **GPU Compositing Fix (`App.vue`):** Hintergrundbild vom Root-`<div>` in zwei eigene `position: fixed; z-index: -10`-Divs ausgelagert — Bild-Layer statisch (GPU kann cachen), Overlay-Layer wechselt nur eine Farbe. `computed` + `hintergrundStyle` entfernt. Verhindert, dass der gesamte App-Container auf der GPU gehalten wird.
+  - **Rückgängig machen:** `computed` aus Vue-Import ergänzen, `hintergrundStyle`-Computed wieder einfügen (Overlay als `linear-gradient` über `url('/hems-bild3.jpg')`), `:style="hintergrundStyle"` auf Root-`<div>`, die zwei Hintergrund-`<div>`s entfernen.
+
+- **Audio `preload` geändert:** `preload="metadata"` → `preload="none"` in `InterventionsAkkordeon.vue:216`
+  - **Grund:** Android listete die App unter den Akku-entleerenden Apps. `preload="metadata"` lässt den Browser beim Rendern des `<audio>`-Elements sofort Netzwerk-Anfragen stellen und erzeugt eine Android Media Session (Prozess-Wakelock), selbst wenn kein Audio läuft.
+  - **Auswirkung:** Minimale Startverzögerung beim ersten Play-Klick (im LAN <100 ms). Seekbar zeigt Gesamtdauer erst nach erstem Laden — funktional kein Unterschied für einmaliges Anhören.
+  - **Rückgängig machen:** In `InterventionsAkkordeon.vue` Zeile 216 `preload="none"` → `preload="metadata"` ändern. Sinnvoll nur, wenn die Anzeige der Gesamtdauer vor dem ersten Play wichtiger ist als Akku-Schonung.
 
 ### 2026-05-19 (Session 8)
 

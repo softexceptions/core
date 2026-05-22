@@ -84,12 +84,12 @@ Format: Aufgabe + Kontext + erwartetes Ergebnis — damit ich autonom arbeiten k
 ## Start-Befehle
 
 **Frontend** (Port [XXXX]):
-```bash
+```
 cd frontend && npm run dev
 ```
 
 **Backend** (Port [XXXX]):
-```bash
+```
 cd backend && uvicorn main:app --reload
 ```
 
@@ -102,7 +102,7 @@ cd backend && uvicorn main:app --reload
 - [ ] [Schritt 2]
 
 **Deploy-Befehl:**
-```bash
+```
 # Beispiel
 cd frontend && npm run build
 scp -r dist/* user@server:/var/www/projekt/

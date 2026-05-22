@@ -36,3 +36,8 @@ GSD und PAUL sind zwei strukturierte Frameworks für die Softwareentwicklung mit
 ## Meine Erfahrungen
 
 -
+
+## Referenzen
+
+- [[../../04 Ressourcen/Skills/get-shit-done|get-shit-done]] — Installation + Befehle
+- [[../../04 Ressourcen/Skills/paul|paul]] — Installation + Befehle

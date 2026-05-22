@@ -22,7 +22,7 @@ core/.claude/skills/tdd/skill.md
 
 **Symlink für ein neues Projekt:**
 
-```bash
+```
 ln -s /home/norbert/Code/ipNINX/core/.claude/skills/tdd \
       /pfad/zum/projekt/.claude/skills/tdd
 ```

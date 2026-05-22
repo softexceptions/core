@@ -27,7 +27,7 @@ Claude soll Excalidraw-Diagramme **abschnittsweise** aufbauen — nie das gesamt
 ## Lokaler Renderer — Setup
 
 Falls `excalidraw-bundle.js` fehlt oder veraltet ist:
-```bash
+```
 cd /tmp && mkdir excalidraw_render && cd excalidraw_render
 npm init -y && npm install @excalidraw/excalidraw
 echo 'import { exportToSvg } from "@excalidraw/excalidraw"; window.__excalidrawExportToSvg = exportToSvg; window.__moduleReady = true;' > entry.js

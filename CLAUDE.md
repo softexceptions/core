@@ -52,6 +52,15 @@ Installiert in `.claude/skills/`:
 ### Session-Start
 Prüfe 01 Inbox/ auf neue Notizen. Zeige, was drin liegt, und biete an, die Einträge einzusortieren.
 
+### Vault-Audit (bei „gibt es was zu ordnen?")
+
+Systematisch in dieser Reihenfolge prüfen:
+
+1. **Inbox** — `01 Inbox/` auf unverarbeitete Einträge prüfen
+2. **Root-Dateien** — lose `.md`-Dateien im Vault-Root ohne klare Zugehörigkeit
+3. **Projekt-Backlinks** — jede Datei in `02 Projekte/` muss in mindestens einem `03 Bereiche/`-File verlinkt sein; fehlende Links ergänzen
+4. **Broken Wikilinks** — aktive Projektnotizen auf kaputte `[[Links]]` prüfen (Zieldatei existiert nicht)
+
 ### Kontext-Briefing
 Wenn Norbert fragt "Was war nochmal aktuell?" oder "Wo war ich stehen geblieben?": Lies die letzten 2–3 Daily Notes und die aktiven Projekt-Dateien für ein kurzes Briefing.
 
