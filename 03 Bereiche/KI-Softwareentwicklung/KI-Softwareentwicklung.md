@@ -21,9 +21,11 @@ Dieser Bereich umfasst alles rund um die Entwicklung von Software mit modernen K
 ## Workflow-Verbesserungen
 
 - [[06 Archiv/Plan - Merke dir den Plan Routine|Plan - Merke dir den Plan Routine]] — Session-Routine zum Speichern von Plänen im Vault (abgeschlossen)
+- [[04 Ressourcen/Claude/Neues Projekt anlegen]] — Symlink, CLAUDE.md, Vault-Notiz: vollständiger Setup-Workflow
 
 ## Verbundene Projekte
 
+- [[02 Projekte/KiaChargeNav|KiaChargeNav]]
 - [[02 Projekte/IHK-Bewertungssoftware|IHK-Bewertungssoftware]]
 - [[02 Projekte/Energielandingpage|Energielandingpage]]
 - [[02 Projekte/Ausbilder-Landingpage|Ausbilder-Landingpage]]

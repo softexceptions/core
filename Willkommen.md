@@ -7,11 +7,13 @@
 
 ## Aktive Projekte
 
+- [[02 Projekte/KiaChargeNav]]
 - [[02 Projekte/IHK-Bewertungssoftware]]
 - [[02 Projekte/Energielandingpage]]
 - [[02 Projekte/Ausbilder-Landingpage]]
 - [[02 Projekte/ipNginx]]
 - [[02 Projekte/SchulOrdnungHems]]
+- [[02 Projekte/SchutzkonzeptHems]]
 
 ## Struktur
 
@@ -31,4 +33,6 @@
 | `/backend-agent` | Python + FastAPI, Clean Architecture |
 | `/vue-solid` | Vue SOLID Architektur-Skill |
 | `/python-solid` | Python SOLID Architektur-Skill |
+| `/flutter-solid` | Flutter + Dart, Clean Architecture |
 | `/tdd` | Test-Driven Development |
+| `/ui-ux-pro-max` | UI/UX-Design für Web + Mobile |

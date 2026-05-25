@@ -1,10 +1,10 @@
 ---
 name: tdd
 description: |
-  Striktes Test-Driven Development (TDD) für Python + FastAPI (Backend) und Vue 3 + TypeScript (Frontend).
+  Striktes Test-Driven Development (TDD) für Python + FastAPI (Backend), Vue 3 + TypeScript (Frontend) und Flutter + Dart (Mobile).
   Erzwingt den Red → Green → Refactor-Zyklus: Kein Produktionscode ohne vorherigen fehlschlagenden Test.
-  Verwendet pytest + pytest-asyncio (Python) und Vitest + Vue Test Utils (Vue).
-  Integriert mit dem python-solid Skill: Tests spiegeln die Clean-Architecture-Schichtung wider.
+  Verwendet pytest + pytest-asyncio (Python), Vitest + Vue Test Utils (Vue), flutter_test + mocktail (Flutter/Dart).
+  Integriert mit python-solid, vue-solid und flutter-solid: Tests spiegeln die Clean-Architecture-Schichtung wider.
 
   Verwende diesen Skill immer wenn:
   - Der Nutzer eine neue Funktion, einen Service, ein Repository oder eine Route implementieren möchte
@@ -457,6 +457,329 @@ TDD Code-Review Checkliste
 
 ---
 
+---
+
+## Flutter + Dart (flutter_test + mocktail)
+
+### Test-Stack
+
+| Package | Zweck |
+|---|---|
+| `flutter_test` | Built-in, kein Extra-Package nötig |
+| `mocktail` | Mocking ohne Code-Generator (bevorzugt gegenüber `mockito`) |
+
+```yaml
+# pubspec.yaml
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.0
+```
+
+Tests ausführen: `flutter test`
+
+### Test-Struktur (spiegelt flutter-solid-Schichten)
+
+```
+test/
+├── domain/
+│   ├── models/        → pure Dart, kein Flutter-Import, keine Mocks
+│   └── use_cases/     → Use Cases mit Mock-Repositories (mocktail)
+├── data/
+│   └── repositories/  → Repository-Implementierungen mit Mock-DataSources
+└── presentation/
+    ├── controllers/   → Riverpod-Controller mit ProviderContainer
+    └── widgets/       → Widget-Tests (testWidgets)
+```
+
+**Schicht → Test-Regel:**
+
+| Schicht | Flutter-Import | Was wird gemockt? |
+|---|---|---|
+| `domain/models/` | ❌ Nein | Nichts |
+| `domain/use_cases/` | ❌ Nein | `abstract class IRepository` via `mocktail` |
+| `data/repositories/` | ❌ Nein | DataSource via `mocktail` |
+| `presentation/controllers/` | ❌ Nein | Use Cases via `mocktail` + `ProviderContainer` |
+| `presentation/widgets/` | ✅ Ja | Controller via Provider-Override |
+
+---
+
+### Layer 1: Domain Model Tests (kein Mock nötig)
+
+```dart
+// 🔴 RED — test/domain/models/charging_station_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:kia_charge_nav/domain/models/charging_station.dart'; // existiert noch nicht
+
+void main() {
+  group('ChargingStation.isInFront', () {
+    late ChargingStation station;
+
+    setUp(() {
+      station = const ChargingStation(
+        id: '1', name: 'Shell A5',
+        network: 'Shell Recharge',
+        latitude: 50.1, longitude: 8.7,
+      );
+    });
+
+    test('returns true when station is within tolerance ahead', () {
+      // Fahrtrichtung Nord (0°), Station bei 20° → innerhalb 45° Toleranz
+      expect(station.isInFront(0, 20), isTrue);
+    });
+
+    test('returns false when station is behind', () {
+      // Fahrtrichtung Nord (0°), Station bei 180° → hinter dem Fahrzeug
+      expect(station.isInFront(0, 180), isFalse);
+    });
+
+    test('respects custom tolerance', () {
+      // Enge Toleranz: 10°, Station bei 20° → außerhalb
+      expect(station.isInFront(0, 20, toleranceDeg: 10), isFalse);
+    });
+  });
+}
+```
+
+```dart
+// 🟢 GREEN — lib/domain/models/charging_station.dart
+class ChargingStation {
+  final String id;
+  final String name;
+  final String network;
+  final double latitude;
+  final double longitude;
+
+  const ChargingStation({
+    required this.id,
+    required this.name,
+    required this.network,
+    required this.latitude,
+    required this.longitude,
+  });
+
+  bool isInFront(double heading, double stationBearing, {double toleranceDeg = 45}) {
+    final diff = ((stationBearing - heading) + 360) % 360;
+    return diff <= toleranceDeg || diff >= (360 - toleranceDeg);
+  }
+}
+```
+
+---
+
+### Layer 2: Use Case Tests (Mock-Repository via mocktail)
+
+```dart
+// 🔴 RED — test/domain/use_cases/find_nearest_station_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:kia_charge_nav/domain/repositories/i_charging_repository.dart';
+import 'package:kia_charge_nav/domain/use_cases/find_nearest_station.dart';
+
+class MockChargingRepository extends Mock implements IChargingRepository {}
+
+void main() {
+  late MockChargingRepository mockRepo;
+  late FindNearestStation useCase;
+
+  setUp(() {
+    mockRepo = MockChargingRepository();
+    useCase = FindNearestStation(mockRepo);
+  });
+
+  test('returns nearest station in heading direction', () async {
+    final stations = [stationAhead, stationBehind];
+    when(() => mockRepo.findNearby(
+      latitude: any(named: 'latitude'),
+      longitude: any(named: 'longitude'),
+      heading: any(named: 'heading'),
+      network: any(named: 'network'),
+    )).thenAnswer((_) async => stations);
+
+    final result = await useCase.execute(
+      latitude: 50.0, longitude: 8.6,
+      heading: 0, network: 'Shell Recharge',
+    );
+
+    expect(result, equals(stationAhead));
+  });
+
+  test('returns null when no stations found', () async {
+    when(() => mockRepo.findNearby(
+      latitude: any(named: 'latitude'),
+      longitude: any(named: 'longitude'),
+      heading: any(named: 'heading'),
+      network: any(named: 'network'),
+    )).thenAnswer((_) async => []);
+
+    final result = await useCase.execute(
+      latitude: 50.0, longitude: 8.6,
+      heading: 0, network: 'Shell Recharge',
+    );
+
+    expect(result, isNull);
+  });
+}
+```
+
+---
+
+### Layer 3: Repository Tests (Mock-DataSource)
+
+```dart
+// 🔴 RED — test/data/repositories/charging_repository_impl_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:kia_charge_nav/data/datasources/open_charge_map_datasource.dart';
+import 'package:kia_charge_nav/data/repositories/charging_repository_impl.dart';
+
+class MockOpenChargeMapDataSource extends Mock implements OpenChargeMapDataSource {}
+
+void main() {
+  late MockOpenChargeMapDataSource mockSource;
+  late ChargingRepositoryImpl repository;
+
+  setUp(() {
+    mockSource = MockOpenChargeMapDataSource();
+    repository = ChargingRepositoryImpl(mockSource);
+  });
+
+  test('converts DTOs to domain models', () async {
+    when(() => mockSource.fetchNearby(
+      latitude: any(named: 'latitude'),
+      longitude: any(named: 'longitude'),
+      operatorName: any(named: 'operatorName'),
+    )).thenAnswer((_) async => [testDto]);
+
+    final result = await repository.findNearby(
+      latitude: 50.0, longitude: 8.6,
+      heading: 0, network: 'Shell Recharge',
+    );
+
+    expect(result.first, isA<ChargingStation>());
+    expect(result.first.name, equals('Shell A5'));
+  });
+}
+```
+
+---
+
+### Layer 4: Controller Tests (Riverpod ProviderContainer)
+
+```dart
+// 🔴 RED — test/presentation/controllers/home_controller_test.dart
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:kia_charge_nav/domain/use_cases/find_nearest_station.dart';
+import 'package:kia_charge_nav/domain/use_cases/send_destination.dart';
+import 'package:kia_charge_nav/presentation/controllers/home_controller.dart';
+
+class MockFindNearestStation extends Mock implements FindNearestStation {}
+class MockSendDestination extends Mock implements SendDestination {}
+
+void main() {
+  late MockFindNearestStation mockFind;
+  late MockSendDestination mockSend;
+  late ProviderContainer container;
+
+  setUp(() {
+    mockFind = MockFindNearestStation();
+    mockSend = MockSendDestination();
+    container = ProviderContainer(overrides: [
+      findNearestStationProvider.overrideWithValue(mockFind),
+      sendDestinationProvider.overrideWithValue(mockSend),
+    ]);
+  });
+
+  tearDown(() => container.dispose());
+
+  test('state contains found station after findAndSend', () async {
+    when(() => mockFind.execute(
+      latitude: any(named: 'latitude'),
+      longitude: any(named: 'longitude'),
+      heading: any(named: 'heading'),
+      network: any(named: 'network'),
+    )).thenAnswer((_) async => testStation);
+    when(() => mockSend.execute(any())).thenAnswer((_) async {});
+
+    await container.read(homeControllerProvider.notifier).findAndSend('Shell Recharge');
+
+    final state = container.read(homeControllerProvider);
+    expect(state.value, equals(testStation));
+  });
+
+  test('state is error when no station found', () async {
+    when(() => mockFind.execute(
+      latitude: any(named: 'latitude'),
+      longitude: any(named: 'longitude'),
+      heading: any(named: 'heading'),
+      network: any(named: 'network'),
+    )).thenAnswer((_) async => null);
+
+    await container.read(homeControllerProvider.notifier).findAndSend('Shell Recharge');
+
+    final state = container.read(homeControllerProvider);
+    expect(state.hasError, isTrue);
+  });
+}
+```
+
+---
+
+### Layer 5: Widget Tests
+
+```dart
+// 🔴 RED — test/presentation/widgets/mic_button_test.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:kia_charge_nav/presentation/widgets/mic_button.dart';
+
+void main() {
+  testWidgets('MicButton ruft onPressed auf', (tester) async {
+    bool pressed = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MicButton(onPressed: () => pressed = true),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(MicButton));
+    await tester.pump();
+
+    expect(pressed, isTrue);
+  });
+
+  testWidgets('MicButton zeigt Lade-Indikator wenn isLoading', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: MicButton(onPressed: () {}, isLoading: true),
+        ),
+      ),
+    );
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+}
+```
+
+---
+
+### flutter-solid → TDD-Brücke
+
+- Domain-Tests: Kein `import 'package:flutter/...'` — reines Dart, kein Framework
+- `MockChargingRepository extends Mock implements IChargingRepository` — Beweis für Dependency Inversion
+- Use-Case-Tests brauchen minimal Setup → SRP eingehalten
+- Controller-Tests über `ProviderContainer` mit Overrides — kein echter HTTP-Call
+- Widget-Tests nur über Callbacks + `find.byType` — keine Implementierungsdetails
+- Faustregel: Braucht ein Use-Case-Test mehr als 2 Mocks → wahrscheinlich SRP-Verletzung
+
+---
+
 ## Verbote (STRIKT — keine Ausnahmen)
 
 - ❌ Produktionscode schreiben bevor ein Test existiert
@@ -467,7 +790,7 @@ TDD Code-Review Checkliste
 
 ## Integration mit den SOLID-Skills
 
-Dieser Skill setzt voraus, dass **python-solid** und/oder **vue-solid** gleichzeitig aktiv sind. Die dort definierten OO- und Architekturregeln gelten uneingeschränkt — sie werden hier nicht wiederholt, sondern vorausgesetzt.
+Dieser Skill setzt voraus, dass **python-solid**, **vue-solid** und/oder **flutter-solid** gleichzeitig aktiv sind. Die dort definierten OO- und Architekturregeln gelten uneingeschränkt — sie werden hier nicht wiederholt, sondern vorausgesetzt.
 
 TDD und SOLID verstärken sich gegenseitig:
 - **Schwer testbarer Code = SOLID-Verletzung** (z.B. God Class, fehlende Interfaces, hartcodierte Abhängigkeiten)

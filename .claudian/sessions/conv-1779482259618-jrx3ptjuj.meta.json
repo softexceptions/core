@@ -4,8 +4,8 @@
   "title": "Verifiziere Benutzerkontext",
   "titleGenerationStatus": "success",
   "createdAt": 1779482259618,
-  "updatedAt": 1779488843241,
-  "lastResponseAt": 1779488843241,
+  "updatedAt": 1779489212985,
+  "lastResponseAt": 1779489152207,
   "sessionId": "739b605f-4834-4c97-a413-98b95e5b47a9",
   "providerState": {
     "providerSessionId": "739b605f-4834-4c97-a413-98b95e5b47a9"
@@ -17,11 +17,11 @@
   "usage": {
     "model": "sonnet",
     "inputTokens": 1,
-    "cacheCreationInputTokens": 466,
-    "cacheReadInputTokens": 123430,
+    "cacheCreationInputTokens": 1040,
+    "cacheReadInputTokens": 124830,
     "contextWindow": 200000,
-    "contextTokens": 123897,
-    "percentage": 62,
+    "contextTokens": 125871,
+    "percentage": 63,
     "contextWindowIsAuthoritative": true
   }
 }

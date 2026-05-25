@@ -28,9 +28,17 @@ Skills sind spezialisierte, wiederverwendbare Funktionalitäten für Claude. Sie
 |---|---|---|
 | vue-solid | `/vue-solid` | Vue 3 + TypeScript, SOLID-Architektur |
 | python-solid | `/python-solid` | Python + FastAPI, Clean Architecture |
+| flutter-solid | `/flutter-solid` | Flutter + Dart, Clean Architecture |
 | tdd | `/tdd` | Test-Driven Development |
 | get-shit-done | `npx get-shit-done-cc@latest` | Workflow-Struktur, verhindert Kontextverlust |
 | paul | `npx paul-framework` | Planungs-Framework für komplexe Projekte |
+
+### Design-Skills (System-Skills, kein Symlink nötig)
+
+| Skill | Aufruf | Funktion |
+|---|---|---|
+| ui-ux-pro-max | `/ui-ux-pro-max` | UI/UX für Web + Mobile inkl. Flutter — 50+ Stile, 161 Paletten, 99 UX-Richtlinien |
+| frontend-design | `/frontend-design` | Hochwertige Web-Interfaces — Komponenten, Layouts, Poster |
 
 Symlink-Befehle für neue Projekte: siehe jeweilige Referenz-Notiz im Skill-Ordner.
 

@@ -24,6 +24,13 @@ Ich bin Norbert, Informatik Lehrer und Softwareentwickler. Ich unterrichte Anwen
 - **06 Archiv/** — Abgeschlossene Projekte und inaktive Bereiche. Alte Code-Projekte und Cowork-Migration.
 - **07 Anhänge/** — Bilder, PDFs, Medien.
 
+## Wichtige Workflows
+
+| Workflow | Datei |
+|---|---|
+| Neues Projekt anlegen (Symlink, CLAUDE.md, Vault-Notiz) | [[04 Ressourcen/Claude/Neues Projekt anlegen]] |
+| Plan aus Claude Code in Vault übertragen | [[06 Archiv/Plan - Merke dir den Plan Routine]] |
+
 ## Verfügbare Skills
 
 Installiert in `.claude/skills/`:

@@ -1,0 +1,23 @@
+{
+  "id": "conv-1779576159578-0rvmryanp",
+  "providerId": "claude",
+  "title": "Identität und Profession klären",
+  "titleGenerationStatus": "success",
+  "createdAt": 1779576159578,
+  "updatedAt": 1779664250965,
+  "lastResponseAt": 1779664250965,
+  "sessionId": "5560516b-a697-499e-b018-a36d9ec22655",
+  "providerState": {
+    "providerSessionId": "5560516b-a697-499e-b018-a36d9ec22655"
+  },
+  "usage": {
+    "model": "sonnet",
+    "inputTokens": 1,
+    "cacheCreationInputTokens": 434,
+    "cacheReadInputTokens": 165205,
+    "contextWindow": 200000,
+    "contextTokens": 165640,
+    "percentage": 83,
+    "contextWindowIsAuthoritative": true
+  }
+}
