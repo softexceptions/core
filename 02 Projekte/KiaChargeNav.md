@@ -90,12 +90,74 @@ Flutter App
 
 ## Unterstützte Ladenetzwerke (geplant)
 
+### Deutschland (primär)
 - Shell Recharge
 - EWE Go
 - Ionity
 - EnBW
 - Aral Pulse
-- (erweiterbar — Netzwerke als Konfiguration, nicht hardcoded)
+- Fastned
+- Tesla Supercharger
+
+### International (Ausland)
+- ChargePoint (Europa + USA)
+- Allego (Benelux, DE, FR, AT)
+- Osprey (UK)
+- Electrify America (USA)
+- Blink (USA)
+
+> [!tip] Konfiguration statt Hardcoding
+> Netzwerke als Konfigurationsliste anlegen — nicht hardcoden. Neue Netze werden nur in der Keyword-Liste und im UI ergänzt, kein Code-Umbau.
+
+## Auslands-Betrieb
+
+Die App muss auch im Ausland ohne manuelle Anpassungen funktionieren. Betroffen sind vier Bereiche:
+
+### 1 — Ladestation-APIs
+
+| Komponente | Inland (DE) | Ausland |
+|---|---|---|
+| GoingElectric | Primärquelle ✅ | Europaweite Abdeckung ✅ — aber DE-fokussiert |
+| OpenChargeMap | Fallback | **Primärquelle im Ausland** — weltweite Daten |
+
+**Strategie:** Backend prüft anhand der Koordinaten, ob die Position in Deutschland liegt. Außerhalb DE wird OpenChargeMap bevorzugt, GoingElectric als Fallback.
+
+```
+DE-Koordinaten  → GoingElectric → OCM (Fallback)
+EU/Welt         → OpenChargeMap → GoingElectric (Fallback)
+```
+
+> [!info] Koordinaten-Check im Backend
+> Einfache Bounding-Box für Deutschland (47.3°N–55.0°N, 6.0°E–15.0°E) reicht aus — keine externe Geocoding-API nötig.
+
+### 2 — Kia-API Region
+
+`Region.Europe` in der `hyundai-kia-connect-api` deckt alle EU-Länder ab — kein Umschalten beim Fahren ins Ausland nötig.
+
+> [!warning] Außerhalb der EU
+> Kia US / CA nutzen andere Server (`Region.USA`, `Region.Canada`). Für Nicht-EU-Reisen müsste die Region manuell in der Backend-`.env` umgestellt werden. Vorerst kein automatischer Wechsel geplant.
+
+### 3 — Keyword-Matching (Spracheingabe)
+
+Internationale Netzwerke kommen mit eigenen Namen — die `network_matcher.dart` muss erweitert werden:
+
+| Netzwerk | Keywords |
+|---|---|
+| ChargePoint | „chargepoint", „charge point" |
+| Allego | „allego" |
+| Electrify America | „electrify america", „electrify" |
+| Tesla | „tesla", „supercharger", „tesla supercharger" |
+| Osprey | „osprey" |
+
+> [!tip] Länder-adaptive Button-Anzeige (Idee)
+> Später: GPS-Land erkennen → häufigste Netze des Landes als Buttons einblenden. Für v1 reicht die erweiterte Keyword-Liste.
+
+### 4 — Backend-Erreichbarkeit
+
+Das Backend läuft auf `https://kia.softexceptions.com` — erreichbar über Mobilfunk-Roaming aus dem gesamten EU-Ausland. EU-Roaming ist seit 2017 ohne Aufpreis. Außerhalb der EU: normaler Datenverbrauch über Roaming.
+
+> [!tip] Offline-Fallback (Idee für später)
+> Letzte erfolgreiche Station im Gerät cachen — bei Tunneln oder schlechtem Netz zumindest den letzten Suchbegriff anzeigen.
 
 ## Kia-API
 
@@ -458,3 +520,11 @@ Alle Felder sind im `Vehicle`-Objekt nach `vm.update_all_vehicles_with_cached_st
   - Backend `/find`: try/except um `find_nearest()` → 503 mit Meldung statt 500
   - `charging_service`: GoingElectric + OCM API-Fehler geben `None` zurück → Fallback greift
 - **App-Icon:** Navigationspfeil + Blitz, Cyan auf Dark, generiert mit `flutter_launcher_icons` (alle 5 Android-Größen)
+
+### 2026-05-25 — Auslands-Unterstützung
+
+- **Anforderung ergänzt:** App muss im Ausland ohne manuelle Eingriffe funktionieren
+- **API-Strategie:** Koordinaten-Check im Backend (DE-Bounding-Box) → GoingElectric primär in DE, OpenChargeMap primär im Ausland
+- **Kia-API:** `Region.Europe` deckt alle EU-Länder ab — kein Umschalten nötig
+- **Keyword-Matcher:** internationale Netzwerke ergänzt (ChargePoint, Allego, Tesla, Electrify America, Osprey)
+- **Ladenetzwerke:** internationale Netze in die Netzwerk-Liste aufgenommen
