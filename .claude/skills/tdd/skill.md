@@ -1,10 +1,11 @@
 ---
 name: tdd
 description: |
-  Striktes Test-Driven Development (TDD) für Python + FastAPI (Backend), Vue 3 + TypeScript (Frontend) und Flutter + Dart (Mobile).
+  Striktes Test-Driven Development (TDD) für Python, Vue 3, Flutter, Rust, Java und C#.
   Erzwingt den Red → Green → Refactor-Zyklus: Kein Produktionscode ohne vorherigen fehlschlagenden Test.
-  Verwendet pytest + pytest-asyncio (Python), Vitest + Vue Test Utils (Vue), flutter_test + mocktail (Flutter/Dart).
-  Integriert mit python-solid, vue-solid und flutter-solid: Tests spiegeln die Clean-Architecture-Schichtung wider.
+  Verwendet: pytest (Python), Vitest (Vue), flutter_test + mocktail (Flutter), cargo test + mockall (Rust),
+  JUnit 5 + Mockito (Java), xUnit + Moq (C#).
+  Integriert mit allen SOLID-Skills: Tests spiegeln die Clean-Architecture-Schichtung wider.
 
   Verwende diesen Skill immer wenn:
   - Der Nutzer eine neue Funktion, einen Service, ein Repository oder eine Route implementieren möchte
@@ -788,9 +789,542 @@ void main() {
 - ❌ Refactoring überspringen ("läuft ja")
 - ❌ Tests nachträglich schreiben und als TDD verkaufen
 
+---
+
+## Rust (cargo test + mockall)
+
+### Test-Stack
+
+| Crate | Zweck |
+|---|---|
+| `cargo test` | Built-in, kein Extra-Crate nötig |
+| `mockall` | Automatisches Mock-Generieren aus Traits via `#[automock]` |
+| `tokio::test` | Async-Tests mit Tokio-Runtime |
+
+```toml
+# Cargo.toml
+[dev-dependencies]
+mockall = "0.13"
+tokio = { version = "1", features = ["full", "test-util"] }
+```
+
+Tests ausführen: `cargo test`
+Async-Tests ausführen: `cargo test` (mit `#[tokio::test]` auf dem Test)
+
+### Test-Struktur (spiegelt rust-solid-Schichten)
+
+```
+src/
+├── domain/
+│   ├── models/
+│   │   └── board.rs          → #[cfg(test)] mod tests — kein Mock nötig
+│   ├── repositories/
+│   │   └── i_board_repository.rs  → #[automock] auf dem Trait
+│   └── use_cases/
+│       └── connect_to_board.rs    → #[cfg(test)] mit MockIBoardRepository
+└── infrastructure/
+    └── repositories/
+        └── promethean_client.rs   → Integrationstests (optional)
+```
+
+**Schicht → Test-Regel:**
+
+| Schicht | Externe Crates erlaubt? | Was wird gemockt? |
+|---|---|---|
+| `domain/models/` | ❌ Nein | Nichts — pure Rust-Logik |
+| `domain/use_cases/` | ❌ Nein | Trait-Objekte via `mockall` |
+| `infrastructure/` | ✅ Ja | HTTP-Responses via `wiremock` (optional) |
+| `main.rs` | ✅ Ja | Alles via Fake-Implementierungen |
+
+---
+
+### Layer 1: Domain Model Tests (kein Mock nötig)
+
+```rust
+// 🔴 RED — src/domain/models/board.rs
+// Datei existiert noch nicht → compile error ist der RED-Beweis
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn board_stores_name_and_ip() {
+        let board = Board::new("id-1", "Klassenzimmer 3b", "192.168.1.45");
+        assert_eq!(board.name, "Klassenzimmer 3b");
+        assert_eq!(board.local_ip, "192.168.1.45");
+    }
+
+    #[test]
+    fn pin_must_be_six_digits() {
+        assert!(Pin::new("512903").is_ok());
+        assert!(Pin::new("123").is_err());     // zu kurz
+        assert!(Pin::new("abcdef").is_err());  // keine Zahlen
+    }
+}
+```
+
+```rust
+// 🟢 GREEN — src/domain/models/board.rs
+#[derive(Debug, Clone, PartialEq)]
+pub struct Board {
+    pub id: String,
+    pub name: String,
+    pub local_ip: String,
+}
+
+impl Board {
+    pub fn new(id: impl Into<String>, name: impl Into<String>, local_ip: impl Into<String>) -> Self {
+        Self { id: id.into(), name: name.into(), local_ip: local_ip.into() }
+    }
+}
+
+pub struct Pin(String);
+
+impl Pin {
+    pub fn new(value: &str) -> Result<Self, String> {
+        if value.len() == 6 && value.chars().all(|c| c.is_ascii_digit()) {
+            Ok(Self(value.to_string()))
+        } else {
+            Err(format!("PIN muss 6 Ziffern haben, war: '{}'", value))
+        }
+    }
+
+    pub fn as_str(&self) -> &str { &self.0 }
+}
+```
+
+---
+
+### Layer 2: Use Case Tests (mockall)
+
+```rust
+// src/domain/repositories/i_board_repository.rs
+use mockall::automock;
+
+#[automock]  // ← generiert MockIBoardRepository automatisch
+#[async_trait::async_trait]
+pub trait IBoardRepository: Send + Sync {
+    async fn find_by_pin(&self, pin: &str) -> Result<Board, DomainError>;
+}
+```
+
+```rust
+// 🔴 RED — src/domain/use_cases/connect_to_board.rs
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::domain::repositories::MockIBoardRepository;  // von #[automock] generiert
+    use crate::domain::repositories::MockIStreamService;
+
+    #[tokio::test]
+    async fn execute_returns_board_on_success() {
+        let mut mock_repo = MockIBoardRepository::new();
+        mock_repo
+            .expect_find_by_pin()
+            .with(mockall::predicate::eq("512903"))
+            .times(1)
+            .returning(|_| Ok(Board::new("id-1", "Raum 3b", "192.168.1.45")));
+
+        let mut mock_stream = MockIStreamService::new();
+        mock_stream
+            .expect_start_stream()
+            .times(1)
+            .returning(|_| Ok(()));
+
+        let use_case = ConnectToBoard::new(mock_repo, mock_stream);
+        let result = use_case.execute("512903").await;
+
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().name, "Raum 3b");
+    }
+
+    #[tokio::test]
+    async fn execute_returns_error_when_board_not_found() {
+        let mut mock_repo = MockIBoardRepository::new();
+        mock_repo
+            .expect_find_by_pin()
+            .returning(|pin| Err(DomainError::BoardNotFound(pin.to_string())));
+
+        let mock_stream = MockIStreamService::new(); // wird nicht aufgerufen
+
+        let use_case = ConnectToBoard::new(mock_repo, mock_stream);
+        let result = use_case.execute("000000").await;
+
+        assert!(matches!(result, Err(DomainError::BoardNotFound(_))));
+    }
+}
+```
+
+---
+
+### Layer 3: Integration Tests (optional, separater tests/-Ordner)
+
+```rust
+// tests/integration_test.rs  ← eigene Datei außerhalb von src/
+use stream_prometh::domain::use_cases::ConnectToBoard;
+
+// Fake-Implementierung statt Mock — für komplexere Szenarien
+struct FakeBoardRepository {
+    boards: std::collections::HashMap<String, Board>,
+}
+
+#[async_trait::async_trait]
+impl IBoardRepository for FakeBoardRepository {
+    async fn find_by_pin(&self, pin: &str) -> Result<Board, DomainError> {
+        self.boards.get(pin)
+            .cloned()
+            .ok_or_else(|| DomainError::BoardNotFound(pin.to_string()))
+    }
+}
+
+#[tokio::test]
+async fn full_flow_with_fake_repo() {
+    let mut boards = std::collections::HashMap::new();
+    boards.insert("512903".to_string(), Board::new("id-1", "Raum 3b", "192.168.1.45"));
+
+    let repo = FakeBoardRepository { boards };
+    let stream = FakeStreamService::new();
+    let use_case = ConnectToBoard::new(repo, stream);
+
+    let board = use_case.execute("512903").await.unwrap();
+    assert_eq!(board.name, "Raum 3b");
+}
+```
+
+---
+
+### rust-solid → TDD-Brücke
+
+- Domain-Tests: Kein `reqwest`, kein `tokio-tungstenite` — nur `std` + `thiserror`
+- `#[automock]` auf Traits = Beweis für Dependency Inversion (kein Trait → kein Mock möglich)
+- Use-Case-Tests brauchen minimal Setup → SRP eingehalten
+- Faustregel: Braucht ein Use-Case-Test mehr als 2 Mocks → wahrscheinlich SRP-Verletzung
+- `unwrap()` in Tests ist erlaubt — im Produktionscode niemals
+
+---
+
+---
+
+## Java (JUnit 5 + Mockito)
+
+### Test-Stack
+
+| Library | Zweck |
+|---|---|
+| `JUnit 5` | Test-Framework (built-in in Spring Boot) |
+| `Mockito` | Mocking via `@Mock`, `@InjectMocks`, `when(...).thenReturn(...)` |
+| `AssertJ` | Flüssige Assertions (`assertThat(x).isEqualTo(y)`) |
+
+```xml
+<!-- pom.xml — spring-boot-starter-test enthält alles -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+Tests ausführen: `mvn test` oder `./gradlew test`
+
+### Test-Struktur (spiegelt java-solid-Schichten)
+
+```
+src/test/java/com/example/
+├── domain/
+│   ├── model/        → pure Java, kein Spring, keine Mocks
+│   └── usecase/      → Use Cases mit Mock-Repositories (Mockito)
+├── application/
+│   └── service/      → Services mit Mock-Use-Cases
+└── presentation/
+    └── controller/   → @WebMvcTest — nur Controller-Schicht
+```
+
+**Schicht → Test-Regel:**
+
+| Schicht | Spring-Kontext | Was wird gemockt? |
+|---|---|---|
+| `domain/model/` | ❌ Nein | Nichts |
+| `domain/usecase/` | ❌ Nein | `interface IRepository` via `@Mock` |
+| `application/service/` | ❌ Nein | Use Cases via `@Mock` |
+| `presentation/controller/` | ✅ `@WebMvcTest` | Service via `@MockBean` |
+
+---
+
+### Layer 1: Domain Model Tests (kein Mock)
+
+```java
+// 🔴 RED — src/test/java/.../domain/model/PinTest.java
+import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+
+class PinTest {
+
+    @Test
+    void validPin_isCreatedSuccessfully() {
+        var pin = new Pin("512903");
+        assertThat(pin.value()).isEqualTo("512903");
+    }
+
+    @Test
+    void tooShortPin_throwsException() {
+        assertThatThrownBy(() -> new Pin("123"))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("6 Ziffern");
+    }
+
+    @Test
+    void pinWithLetters_throwsException() {
+        assertThatThrownBy(() -> new Pin("abcdef"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+}
+```
+
+```java
+// 🟢 GREEN — src/main/java/.../domain/model/Pin.java
+public record Pin(String value) {
+    public Pin {
+        if (value == null || !value.matches("\\d{6}"))
+            throw new IllegalArgumentException("PIN muss 6 Ziffern haben: " + value);
+    }
+}
+```
+
+---
+
+### Layer 2: Use Case Tests (Mockito)
+
+```java
+// 🔴 RED — src/test/java/.../domain/usecase/FindNearestStationTest.java
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class FindNearestStationTest {
+
+    @Mock
+    IChargingStationRepository repository;
+
+    @Test
+    void execute_returnsNearestStation() {
+        var station = new ChargingStation("1", "Shell A5", "Shell Recharge", 50.1, 8.7);
+        when(repository.findNearby(anyDouble(), anyDouble(), anyDouble(),
+                eq("Shell Recharge"), anyDouble()))
+            .thenReturn(List.of(station));
+
+        var useCase = new FindNearestStation(repository);
+        var result = useCase.execute(50.0, 8.6, 0.0, "Shell Recharge");
+
+        assertThat(result.getName()).isEqualTo("Shell A5");
+    }
+
+    @Test
+    void execute_throwsWhenNoStationFound() {
+        when(repository.findNearby(anyDouble(), anyDouble(), anyDouble(),
+                anyString(), anyDouble()))
+            .thenReturn(List.of());
+
+        var useCase = new FindNearestStation(repository);
+
+        assertThatThrownBy(() -> useCase.execute(50.0, 8.6, 0.0, "Shell Recharge"))
+            .isInstanceOf(StationNotFoundException.class);
+    }
+}
+```
+
+---
+
+### Layer 3: Controller Tests (@WebMvcTest)
+
+```java
+// 🔴 RED — src/test/java/.../presentation/controller/ChargingControllerTest.java
+@WebMvcTest(ChargingController.class)
+class ChargingControllerTest {
+
+    @Autowired MockMvc mockMvc;
+    @MockBean IChargingService chargingService;
+
+    @Test
+    void postFindAndSend_returns200() throws Exception {
+        var station = new ChargingStation("1", "Shell A5", "Shell Recharge", 50.1, 8.7);
+        when(chargingService.findAndSend(anyDouble(), anyDouble(), anyDouble(), anyString()))
+            .thenReturn(station);
+
+        mockMvc.perform(post("/api/charging/find-and-send")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {"latitude":50.0,"longitude":8.6,"heading":0.0,"network":"Shell Recharge"}
+                """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("Shell A5"));
+    }
+}
+```
+
+---
+
+### java-solid → TDD-Brücke
+
+- Domain-Tests: Kein `@SpringBootTest` — pure JUnit 5, kein Spring-Kontext
+- `@Mock IRepository` = Beweis für Dependency Inversion (kein Interface → kein Mock möglich)
+- `@WebMvcTest` lädt nur Controller-Schicht — kein vollständiger Spring-Kontext
+- Faustregel: Braucht ein Use-Case-Test `@SpringBootTest` → wahrscheinlich SRP-Verletzung
+
+---
+
+## C# (xUnit + Moq)
+
+### Test-Stack
+
+| Library | Zweck |
+|---|---|
+| `xUnit` | Test-Framework (Standard in .NET) |
+| `Moq` | Mocking via `Mock<T>()`, `Setup(...)`, `Verify(...)` |
+| `FluentAssertions` | Flüssige Assertions (`result.Should().Be(...)`) |
+
+```xml
+<!-- .csproj -->
+<PackageReference Include="xunit" Version="2.*" />
+<PackageReference Include="Moq" Version="4.*" />
+<PackageReference Include="FluentAssertions" Version="6.*" />
+<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.*" />
+```
+
+Tests ausführen: `dotnet test`
+
+### Test-Struktur (spiegelt csharp-solid-Schichten)
+
+```
+tests/
+├── Domain/
+│   ├── Models/       → pure C#, kein ASP.NET, keine Mocks
+│   └── UseCases/     → Use Cases mit Mock-Repositories (Moq)
+├── Application/
+│   └── Services/     → Services mit Mock-Use-Cases
+└── Presentation/
+    └── Controllers/  → WebApplicationFactory — Integration
+```
+
+**Schicht → Test-Regel:**
+
+| Schicht | ASP.NET-Kontext | Was wird gemockt? |
+|---|---|---|
+| `Domain/Models/` | ❌ Nein | Nichts |
+| `Domain/UseCases/` | ❌ Nein | `interface IRepository` via `Mock<T>` |
+| `Application/Services/` | ❌ Nein | Use Cases via `Mock<T>` |
+| `Presentation/Controllers/` | ✅ `WebApplicationFactory` | Services via DI-Override |
+
+---
+
+### Layer 1: Domain Model Tests (kein Mock)
+
+```csharp
+// 🔴 RED — tests/Domain/Models/PinTests.cs
+using FluentAssertions;
+
+public class PinTests
+{
+    [Fact]
+    public void ValidPin_IsCreatedSuccessfully()
+    {
+        var pin = new Pin("512903");
+        pin.Value.Should().Be("512903");
+    }
+
+    [Theory]
+    [InlineData("123")]       // zu kurz
+    [InlineData("abcdef")]    // keine Zahlen
+    [InlineData("")]          // leer
+    public void InvalidPin_ThrowsArgumentException(string value)
+    {
+        var act = () => new Pin(value);
+        act.Should().Throw<ArgumentException>()
+           .WithMessage("*6 Ziffern*");
+    }
+}
+```
+
+```csharp
+// 🟢 GREEN — src/Domain/Models/Pin.cs
+public record Pin
+{
+    public string Value { get; }
+
+    public Pin(string value)
+    {
+        if (string.IsNullOrEmpty(value) || !Regex.IsMatch(value, @"^\d{6}$"))
+            throw new ArgumentException($"PIN muss 6 Ziffern haben: {value}");
+        Value = value;
+    }
+}
+```
+
+---
+
+### Layer 2: Use Case Tests (Moq)
+
+```csharp
+// 🔴 RED — tests/Domain/UseCases/FindNearestStationTests.cs
+using Moq;
+using FluentAssertions;
+
+public class FindNearestStationTests
+{
+    private readonly Mock<IChargingStationRepository> _repoMock = new();
+
+    [Fact]
+    public async Task Execute_ReturnsNearestStation()
+    {
+        var station = new ChargingStation("1", "Shell A5", "Shell Recharge", 50.1, 8.7);
+        _repoMock.Setup(r => r.FindNearbyAsync(
+                It.IsAny<double>(), It.IsAny<double>(),
+                It.IsAny<double>(), "Shell Recharge",
+                It.IsAny<double>(), default))
+            .ReturnsAsync(new[] { station });
+
+        var useCase = new FindNearestStation(_repoMock.Object);
+        var result = await useCase.ExecuteAsync(50.0, 8.6, 0.0, "Shell Recharge");
+
+        result.Name.Should().Be("Shell A5");
+    }
+
+    [Fact]
+    public async Task Execute_ThrowsWhenNoStationFound()
+    {
+        _repoMock.Setup(r => r.FindNearbyAsync(
+                It.IsAny<double>(), It.IsAny<double>(),
+                It.IsAny<double>(), It.IsAny<string>(),
+                It.IsAny<double>(), default))
+            .ReturnsAsync(Array.Empty<ChargingStation>());
+
+        var useCase = new FindNearestStation(_repoMock.Object);
+
+        await useCase.Invoking(u => u.ExecuteAsync(50.0, 8.6, 0.0, "Shell Recharge"))
+            .Should().ThrowAsync<StationNotFoundException>();
+    }
+}
+```
+
+---
+
+### csharp-solid → TDD-Brücke
+
+- Domain-Tests: Kein `WebApplicationFactory` — pure xUnit, kein HTTP-Stack
+- `Mock<IRepository>` = Beweis für Dependency Inversion
+- `[Theory] [InlineData(...)]` für parametrisierte Tests (Value Objects, Edge Cases)
+- `CancellationToken.None` oder `default` in Tests — nie produktive Timeouts testen
+- Faustregel: Braucht ein Use-Case-Test `WebApplicationFactory` → SRP-Verletzung
+
+---
+
 ## Integration mit den SOLID-Skills
 
-Dieser Skill setzt voraus, dass **python-solid**, **vue-solid** und/oder **flutter-solid** gleichzeitig aktiv sind. Die dort definierten OO- und Architekturregeln gelten uneingeschränkt — sie werden hier nicht wiederholt, sondern vorausgesetzt.
+Dieser Skill setzt voraus, dass **python-solid**, **vue-solid**, **flutter-solid**, **rust-solid**, **java-solid** und/oder **csharp-solid** gleichzeitig aktiv sind. Die dort definierten OO- und Architekturregeln gelten uneingeschränkt — sie werden hier nicht wiederholt, sondern vorausgesetzt.
 
 TDD und SOLID verstärken sich gegenseitig:
 - **Schwer testbarer Code = SOLID-Verletzung** (z.B. God Class, fehlende Interfaces, hartcodierte Abhängigkeiten)

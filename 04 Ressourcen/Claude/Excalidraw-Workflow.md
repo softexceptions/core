@@ -24,9 +24,16 @@ Claude soll Excalidraw-Diagramme **abschnittsweise** aufbauen — nie das gesamt
 - **Finale PNG/SVG**: In excalidraw.com exportieren (Fonts korrekt eingebettet)
 - **Lokaler Renderer** (`render_excalidraw.py`): Nur zur schnellen Struktur-Kontrolle während der Erstellung — Font-Rendering ist kaputt (Hieroglyphen)
 
-## Lokaler Renderer — Setup
+## Lokaler Renderer — Setup & Hintergrund
 
-Falls `excalidraw-bundle.js` fehlt oder veraltet ist:
+**Warum lokales Bundle statt CDN?**
+`render_template.html` importierte Excalidraw ursprünglich von `esm.sh` (CDN). Zwei Probleme:
+- `file://`-URLs in Playwright blockieren HTTPS-Imports (Mixed Content)
+- `esm.sh` lieferte `@braintree/sanitize-url` mit 404 → Timeout nach 30 s
+
+Fix (2026-05-10): `excalidraw-bundle.js` lokal mit esbuild gebaut, liegt in `references/`. Kein CDN, kein Single Point of Failure, deutlich schneller (2 s statt Timeout).
+
+**Bundle neu bauen** (falls `excalidraw-bundle.js` fehlt oder veraltet):
 ```
 cd /tmp && mkdir excalidraw_render && cd excalidraw_render
 npm init -y && npm install @excalidraw/excalidraw

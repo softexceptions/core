@@ -1,3 +1,4 @@
+
 # Willkommen in core
 
 ## Schnellstart
@@ -7,6 +8,7 @@
 
 ## Aktive Projekte
 
+- [[02 Projekte/StreamPrometh]]
 - [[02 Projekte/KiaChargeNav]]
 - [[02 Projekte/IHK-Bewertungssoftware]]
 - [[02 Projekte/Energielandingpage]]
@@ -34,5 +36,8 @@
 | `/vue-solid` | Vue SOLID Architektur-Skill |
 | `/python-solid` | Python SOLID Architektur-Skill |
 | `/flutter-solid` | Flutter + Dart, Clean Architecture |
+| `/rust-solid` | Rust, SOLID + Clean Architecture |
+| `/java-solid` | Java + Spring Boot, Clean Architecture |
+| `/csharp-solid` | C# + ASP.NET Core, Clean Architecture |
 | `/tdd` | Test-Driven Development |
 | `/ui-ux-pro-max` | UI/UX-Design für Web + Mobile |

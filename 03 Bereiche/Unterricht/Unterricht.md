@@ -36,3 +36,6 @@ Ziel: Absolventen:innen, die nicht nur Code schreiben können, sondern auch:
 ## Verbundene Projekte
 
 - [[02 Projekte/Ausbilder-Landingpage|Ausbilder-Landingpage]] — Kommunikation mit Betrieben
+- [[02 Projekte/IHK-Bewertungssoftware|IHK-Bewertungssoftware]] — Bewertungstool für IHK-Prüfungen
+- [[02 Projekte/SchulOrdnungHems|SchulOrdnungHems]] — Schulordnung HEMS
+- [[02 Projekte/SchutzkonzeptHems|SchutzkonzeptHems]] — Schutzkonzept HEMS

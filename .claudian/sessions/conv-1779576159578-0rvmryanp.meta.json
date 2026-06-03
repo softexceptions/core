@@ -4,20 +4,20 @@
   "title": "Identität und Profession klären",
   "titleGenerationStatus": "success",
   "createdAt": 1779576159578,
-  "updatedAt": 1779725518765,
-  "lastResponseAt": 1779725518765,
+  "updatedAt": 1780518964883,
+  "lastResponseAt": 1780518964883,
   "sessionId": "5560516b-a697-499e-b018-a36d9ec22655",
   "providerState": {
     "providerSessionId": "5560516b-a697-499e-b018-a36d9ec22655"
   },
   "usage": {
     "model": "sonnet",
-    "inputTokens": 3,
-    "cacheCreationInputTokens": 304,
-    "cacheReadInputTokens": 44933,
+    "inputTokens": 1,
+    "cacheCreationInputTokens": 317,
+    "cacheReadInputTokens": 136622,
     "contextWindow": 200000,
-    "contextTokens": 45240,
-    "percentage": 23,
+    "contextTokens": 136940,
+    "percentage": 68,
     "contextWindowIsAuthoritative": true
   }
 }

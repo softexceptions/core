@@ -6,7 +6,7 @@ tags:
   - fastapi
   - aktiv
 status: aktiv
-stand: 2026-05-04
+stand: 2026-05-28
 deployed: true
 url: https://ordnung.softexceptions.com
 ---
@@ -133,6 +133,42 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 # Link
 
 [Schulordnung](https://ordnung.softexceptions.com/)
+
+## Letzte Änderungen (2026-05-28)
+
+### Neue Schulordnung `_ab 08-2026_final.docx` eingearbeitet
+
+Quelle: `Schulordnung der HEMS_ab 08-2026_final.docx` (verglichen mit `_neu_ab 08-2026.docx`). Beide Dateien liegen im Projektroot.
+
+- **§ 2 Geltungsbereich:** „sonstiges Personal" ergänzt; „Gebäude" → „Gelände"
+- **§ 3 Schulgelände:** Hinweis auf öffentliche Parkflächen am Nordeingang entfernt; quickInfo vereinfacht
+- **§ 8 Schuleigentum:** „Schulbücher" → „Entliehene Schulmaterialien (Schulbücher, Tablets)"
+- **§ 9 Verbote:** Rauchen-Ausnahme für Volljährige entfernt; Verbote-Formulierung vereinfacht
+- **§ 10 Digitale Geräte:** Laptops ergänzt; „prinzipiell ausgeschaltet"
+- **§ 11 Versicherungsschutz:** „nicht versichert" → „keine Haftung" (korrekte Formulierung)
+- **§ 13 Ergänzende Ordnungen:** neuer Punkt „Schulformspezifische Regelungen bei Fehlzeiten"
+- **Chatbot:** Rauchen (Volljährige-Satz entfernt), Handy (Laptops + prinzipiell ergänzt)
+
+### „Unser Ziel"-Abschluss-Karte
+
+Abschluss-Statement der Schulordnung als hervorgehobene Karte nach § 13 eingebaut (`RulesSection.vue`):
+- `hems-navy` Hintergrund, weißer Text, Claymorphism-Stil
+- ▲-Button rechts oben → scrollt via `scrollToTop()` zurück zum Hero
+
+### Quiz — Robustheit ohne Backend
+
+`useQuiz.ts` `onMounted` mit `try/catch/finally` abgesichert: Backend-Fehler setzen `isLoading = false`, `questions` bleibt leer.
+`QuizSection.vue` zeigt drei States: Ladeindikator → „Backend nicht erreichbar" → Fragen.
+
+### Dark Mode — Quiz-Antwort-Buttons
+
+`dark:` Klassen in dynamischen `:class`-Objekten werden von Tailwind JIT nicht zuverlässig ins Bundle aufgenommen. Lösung: CSS-Klasse `quiz-option` + Regeln in `main.css` (nicht im Template).
+
+### UI-Kleinigkeiten
+
+- README komplett neu geschrieben (war falsch — beschrieb Lehrplan statt App)
+- 🎯 → 🔍 bei WhatIfSection-Badge und StickyNav „Wenn?"-Eintrag
+- WhatIfSection-Badge: `bg-hems-glass` → `bg-hems-steel` (konsistent mit Quicklinks)
 
 ## Letzte Änderungen (2026-05-12)
 

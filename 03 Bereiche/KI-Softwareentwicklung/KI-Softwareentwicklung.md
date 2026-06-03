@@ -25,6 +25,7 @@ Dieser Bereich umfasst alles rund um die Entwicklung von Software mit modernen K
 
 ## Verbundene Projekte
 
+- [[02 Projekte/StreamPrometh|StreamPrometh]]
 - [[02 Projekte/KiaChargeNav|KiaChargeNav]]
 - [[02 Projekte/IHK-Bewertungssoftware|IHK-Bewertungssoftware]]
 - [[02 Projekte/Energielandingpage|Energielandingpage]]

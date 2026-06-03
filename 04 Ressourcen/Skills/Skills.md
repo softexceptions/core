@@ -29,7 +29,10 @@ Skills sind spezialisierte, wiederverwendbare Funktionalitäten für Claude. Sie
 | vue-solid | `/vue-solid` | Vue 3 + TypeScript, SOLID-Architektur |
 | python-solid | `/python-solid` | Python + FastAPI, Clean Architecture |
 | flutter-solid | `/flutter-solid` | Flutter + Dart, Clean Architecture |
-| tdd | `/tdd` | Test-Driven Development |
+| rust-solid | `/rust-solid` | Rust, SOLID + Clean Architecture |
+| java-solid | `/java-solid` | Java + Spring Boot, Clean Architecture |
+| csharp-solid | `/csharp-solid` | C# + ASP.NET Core, Clean Architecture |
+| tdd | `/tdd` | Test-Driven Development (Python, Vue, Flutter, Rust, Java, C#) |
 | get-shit-done | `npx get-shit-done-cc@latest` | Workflow-Struktur, verhindert Kontextverlust |
 | paul | `npx paul-framework` | Planungs-Framework für komplexe Projekte |
 
