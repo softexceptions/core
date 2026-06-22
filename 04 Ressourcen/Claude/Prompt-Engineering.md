@@ -55,4 +55,4 @@ Du beschreibst das Ziel — Claude bekommt die Denkarbeit zurück.
 
 ## Ressourcen
 
--
+- [[04 Ressourcen/Freie Rede|Freie Rede]] — Analogie: ein LLM generiert aus einem Konzept wie ein freier Redner; klare These + Struktur im Prompt schlägt Detail-Aufzählung.

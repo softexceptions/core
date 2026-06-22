@@ -119,12 +119,35 @@ http://192.168.2.45:5173/    (mit --host Flag)
 
 ### Deploy-Befehl (Frontend)
 
-```
+```bash
 cd /home/norbert/Code/SchulOrdnungHems/frontend && npm run build
 scp -r /home/norbert/Code/SchulOrdnungHems/frontend/dist/* root@192.168.2.242:/var/www/schulordnung/
 ```
 
 Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
+
+### Deploy-Befehl (Backend)
+
+Bei Änderungen an einzelnen Backend-Dateien (z. B. `schulordnung_data.py`):
+
+```bash
+# 1. Geänderte Datei kopieren (Pfad anpassen falls andere Datei)
+scp /home/norbert/Code/SchulOrdnungHems/backend/app/data/schulordnung_data.py \
+    root@192.168.2.242:/opt/schulordnung/app/data/schulordnung_data.py
+
+# 2. Service neu starten
+ssh root@192.168.2.242 "systemctl restart schulordnung-backend"
+
+# 3. Prüfen (API antwortet?)
+curl -s http://192.168.2.242:8125/api/quiz/questions | python3 -m json.tool
+```
+
+> [!tip] API-Pfade
+> Nginx entfernt `/api/` und leitet an FastAPI weiter. Korrekte Endpunkte:
+> - `GET /api/quiz/questions` → Quiz-Fragen
+> - `POST /api/quiz/submit` → Quiz auswerten
+> - `GET /api/rules` → Schulordnungs-Abschnitte
+> - `POST /api/chatbot` → Chatbot-Antwort
 
 > [!tip] Nginx-Stolperfalle
 > `sites-enabled/default` Symlink muss entfernt werden — sonst fängt der Default-Server alle Requests ab.
@@ -133,6 +156,44 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 # Link
 
 [Schulordnung](https://ordnung.softexceptions.com/)
+
+## Letzte Änderungen (2026-06-22)
+
+### Quiz — Fragen überarbeitet
+
+- **Frage 3** komplett neu: „Wann kann ein Antrag auf Beurlaubung gestellt werden?" — 4 neue Antwortoptionen, richtig: „Nur in besonders begründeten Ausnahmefällen", Erklärung gekürzt
+- **Frage 6** präzisiert: „Wie verlässt du den Unterrichtsraum am Ende des Schultages korrekt?"
+
+### Quiz — Badge-System: kein_badge für 0 richtige Antworten
+
+Vorher bekam man Bronze auch bei 0 richtigen Antworten (Catch-all). Neue Logik:
+
+| Score | Badge |
+|---|---|
+| ≥ 85% | Gold |
+| ≥ 60% | Silber |
+| ≥ 1 richtig | Bronze |
+| 0 richtig | Kein Badge (😔) |
+
+Geänderte Dateien: `domain/models.py`, `presentation/schemas/quiz_schema.py`, `application/services.py` (Backend) + `types/index.ts`, `QuizSection.vue` (Frontend).
+
+### Quicklinks — Beurlaubung durch Konsequenzen ersetzt
+
+„Beurlaubung" und „Krank melden" zeigten beide auf §6 (Fehlzeiten). „Beurlaubung" wurde durch ⚖️ „Konsequenzen" (→ §12) ersetzt.
+
+### Dunkelmodus — Zurück-Button
+
+Text war kaum lesbar. Fix: `dark:bg-slate-600 dark:text-white` in `QuizSection.vue`.
+
+### Szenarien — Texte aktualisiert
+
+- **Verspätung:** Formulierung sachlicher, WebUntis-Tipp bleibt
+- **Krank:** Hinweis auf schulformspezifische Sonderregelungen ergänzt
+- **Beurlaubung:** Grundsatz „nicht möglich" vorangestellt, Ausnahmefälle (Beerdigung, Hochzeit) konkretisiert
+
+### Chatbot — Waffen-Keyword getrennt
+
+`waffe` und `messer` waren im gleichen `KeywordEntry` wie `alkohol`/`drogen` — Antwort erwähnte nur Drogen. Jetzt eigener Eintrag: „Das Mitbringen von Waffen und gefährlichen Gegenständen ist verboten."
 
 ## Letzte Änderungen (2026-05-28)
 

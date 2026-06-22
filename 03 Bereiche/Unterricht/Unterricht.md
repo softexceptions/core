@@ -39,3 +39,7 @@ Ziel: Absolventen:innen, die nicht nur Code schreiben können, sondern auch:
 - [[02 Projekte/IHK-Bewertungssoftware|IHK-Bewertungssoftware]] — Bewertungstool für IHK-Prüfungen
 - [[02 Projekte/SchulOrdnungHems|SchulOrdnungHems]] — Schulordnung HEMS
 - [[02 Projekte/SchutzkonzeptHems|SchutzkonzeptHems]] — Schutzkonzept HEMS
+
+## Verbundene Ressourcen
+
+- [[04 Ressourcen/Freie Rede|Freie Rede]] — frei vortragen ohne Manuskript; Technik des Erklärens (eine These + Struktur-Anker), übertragbar auf Tech-Talks und Unterricht.
