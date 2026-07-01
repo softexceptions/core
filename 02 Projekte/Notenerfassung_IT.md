@@ -5,7 +5,7 @@ tags:
   - schule/it
 status: in-progress
 date: 2026-06-16
-updated: 2026-06-21T20:00
+updated: 2026-06-23
 ---
 
 # Notenerfassung IT
@@ -271,8 +271,8 @@ ILusdExtensionService (Interface)
 - [x] `backend/static/notenerfassung.crx` aktualisiert
 - [x] `notenerfassung-webstore.zip` neu erstellt und im Web Store eingereicht
 
-> [!important] Nach Web Store Freigabe
-> Web Store Extension-ID `gnfmipbngblllffpolcmbgcokooiedpl` in `backend/app/__init__.py` CORS-Origins eintragen (aktuell steht dort noch die lokale PEM-ID `ahfmlgccaajcjabmapikobkgjleobhdb`)
+> [!success] Web Store Extension aktiv (2026-06-23)
+> CORS-Origin für Web Store ID `gnfmipbngblllffpolcmbgcokooiedpl` eingetragen und deployt. Live-Test erfolgreich — Transfer zur LUSD funktioniert über die Web Store Extension.
 
 > [!note] Installationsweg für Kollegen (bis Web Store freigegeben)
 > Download-Button auf `/extension` → `notenerfassung.zip` → umbenennen zu `.crx` → Drag & Drop auf `chrome://extensions/`
@@ -383,6 +383,21 @@ nach 30 Min. serverseitig ab. Ohne diese Logik blieb die Session unbegrenzt akti
 
 ### Dokumentation
 - context7 wird für alle Library-Docs genutzt (Flask, Vue, Alembic, Vite, etc.) — kein Trainingswissen
+
+---
+
+## Deploy-Workflow (ab 2026-06-23)
+
+```
+1. Desktop: Code ändern + git push origin main
+2. SSH auf ansible-control (192.168.2.101):
+   ansible-playbook playbooks/noten_it.yml --ask-vault-pass --tags app
+```
+
+> [!important] Nicht mehr vom Desktop deployen
+> Deployment läuft ausschließlich vom `ansible-control`-LXC (192.168.2.101). Der LXC holt den Code selbst per `git pull` aus GitHub. Rsync vom Desktop ist abgelöst.
+
+Detaillierte Ansible-Doku: [[Ansible]]
 
 ---
 

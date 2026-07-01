@@ -157,6 +157,16 @@ curl -s http://192.168.2.242:8125/api/quiz/questions | python3 -m json.tool
 
 [Schulordnung](https://ordnung.softexceptions.com/)
 
+## Letzte Änderungen (2026-06-23)
+
+### PDF-Link zur offiziellen Schulordnung eingebaut
+
+URL: `https://hems.de/wp-content/uploads/2026/06/2026_Schulordnung_HEMS.pdf`
+
+Zwei Stellen in `RulesSection.vue`:
+- **Header:** Clay-Badge `📄 Offizielles PDF` zwischen H2 und Filter-Hinweis — immer sichtbar
+- **Abschluss-Karte:** Textlink `📄 Vollständige Schulordnung als PDF` unterhalb des Zitat-Satzes
+
 ## Letzte Änderungen (2026-06-22)
 
 ### Quiz — Fragen überarbeitet
