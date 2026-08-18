@@ -8,7 +8,7 @@ Langfristiger Bereich für meine Unterrichtsplanung, Didaktik und Vorbereitung v
 
 ## Beschreibung
 
-Meine Aufgabe als Informatik Lehrer ist es, Auszubildende auf den Beruf vorzubereiten. Mit der rasanten Entwicklung von KI-Tools ändert sich dieser Beruf fundamental. Ich muss meinen Unterricht kontinuierlich anpassen und meine Schüler:innen darauf vorbereiten, diese Tools verantwortungsvoll einzusetzen.
+Meine Aufgabe als Informatik- und Elektrotechnik-Lehrer ist es, Auszubildende auf den Beruf vorzubereiten. Mit der rasanten Entwicklung von KI-Tools ändert sich dieser Beruf fundamental. Ich muss meinen Unterricht kontinuierlich anpassen und meine Schüler:innen darauf vorbereiten, diese Tools verantwortungsvoll einzusetzen.
 
 ## Unterrichts-Fokus
 

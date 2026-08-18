@@ -33,6 +33,8 @@ Dieser Bereich umfasst alles rund um die Entwicklung von Software mit modernen K
 - [[02 Projekte/ipNginx|ipNginx]]
 - [[02 Projekte/SchulOrdnungHems|SchulOrdnungHems]]
 - [[02 Projekte/SchutzkonzeptHems|SchutzkonzeptHems]]
+- [[02 Projekte/homelab-monitoring|homelab-monitoring]] — Grafana/InfluxDB-Monitoring-Stack fürs Homelab
+- [[02 Projekte/bwt|bwt]] — Flutter-App als digitale Bedienungsanleitung für Brauchwasser-Wärmepumpen
 
 ## Ressourcen
 

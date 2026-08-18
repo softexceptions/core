@@ -1,0 +1,24 @@
+{
+  "id": "conv-1783538223861-oeh9pwepy",
+  "providerId": "claude",
+  "title": "Vault aufräumen",
+  "titleGenerationStatus": "success",
+  "createdAt": 1783538223861,
+  "updatedAt": 1787043696487,
+  "lastResponseAt": 1787043687536,
+  "sessionId": "ecb82300-f298-4bfb-9107-3d05c41843da",
+  "providerState": {
+    "providerSessionId": "ecb82300-f298-4bfb-9107-3d05c41843da"
+  },
+  "currentNote": "04 Ressourcen/Skills/csharp-solid/SKILL.md",
+  "usage": {
+    "model": "sonnet",
+    "inputTokens": 2,
+    "cacheCreationInputTokens": 942,
+    "cacheReadInputTokens": 166150,
+    "contextWindow": 1000000,
+    "contextTokens": 167094,
+    "percentage": 17,
+    "contextWindowIsAuthoritative": true
+  }
+}

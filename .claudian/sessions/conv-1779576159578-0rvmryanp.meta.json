@@ -1,15 +1,16 @@
 {
   "id": "conv-1779576159578-0rvmryanp",
   "providerId": "claude",
-  "title": "Identität und Profession klären",
+  "title": "Retrieve user profile",
   "titleGenerationStatus": "success",
   "createdAt": 1779576159578,
-  "updatedAt": 1780518964883,
-  "lastResponseAt": 1780518964883,
+  "updatedAt": 1783538261555,
+  "lastResponseAt": 1783538252750,
   "sessionId": "5560516b-a697-499e-b018-a36d9ec22655",
   "providerState": {
     "providerSessionId": "5560516b-a697-499e-b018-a36d9ec22655"
   },
+  "currentNote": "Unbenannt.md",
   "usage": {
     "model": "sonnet",
     "inputTokens": 1,

@@ -8,7 +8,7 @@ Dieses Vault ist Norberts core.
 
 ## Über mich
 
-Ich bin Norbert, Informatik Lehrer und Softwareentwickler. Ich unterrichte Anwendungsentwickler:innen und bereite sie gezielt auf KI-gestützte Softwareentwicklung vor. Meine Leidenschaft liegt in der Vermittlung moderner Entwicklungspraktiken und innovativen Lösungen. Ausführliches Profil in [[00 Kontext/Über mich]].
+Ich bin Norbert, Informatik- und Elektrotechnik-Lehrer und Softwareentwickler. Ich unterrichte Anwendungsentwickler:innen und bereite sie gezielt auf KI-gestützte Softwareentwicklung vor. Meine Leidenschaft liegt in der Vermittlung moderner Entwicklungspraktiken und innovativen Lösungen. Ausführliches Profil in [[00 Kontext/Über mich]].
 
 ## Vault-Struktur
 
@@ -18,6 +18,7 @@ Ich bin Norbert, Informatik Lehrer und Softwareentwickler. Ich unterrichte Anwen
 - **03 Bereiche/** — Laufende Verantwortungsbereiche ohne Enddatum. Jeder Bereich ist ein eigener Ordner:
   - **KI-Softwareentwicklung** — Hobby und berufliche Entwicklung mit KI-Tools
   - **Unterricht** — Lehrplanung, Didaktik, Schüler-Vorbereitung
+  - **Elektrotechnik & Erneuerbare Energien** — eigene PV-/Batterie-Anlage (Victron, Fronius, Batrium), Hausautomation über Home Assistant/Node-RED
 - **04 Ressourcen/** — Referenzmaterial, Wissen, gesammelte Informationen. Jedes Thema ist ein eigener Ordner:
   - Claude, Skills, Agenten-Engineering, MCP, KI-Auswirkungen
 - **05 Daily Notes/** — Tägliches Logbuch. Format: YYYY-MM-DD.md

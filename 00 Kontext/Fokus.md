@@ -24,6 +24,8 @@ Dieses Vault ist mein Zentrum für:
 
 8. **Tool-Migration** — Übergang von Cowork zu Claude Code dokumentieren und lernen
 
+9. **Anlagen-Management** — Meine PV-/Batterie-Anlage (Victron, Fronius, Batrium) über Node-RED und Home Assistant überwachen, automatisieren und wirtschaftlich auswerten
+
 ## Gesamtziel
 
 Meine Schüler:innen auf KI-gestützte Softwareentwicklung vorbereiten und meine eigene Software-Entwicklung durch Einsatz von Agenten, Skills und modernen KI-Tools vorantreiben — nicht nur optimieren, sondern aktiv entwickeln lassen.
