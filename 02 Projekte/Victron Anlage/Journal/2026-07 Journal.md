@@ -17,7 +17,7 @@ Energie-Dashboards, erste Auswertungen.
 > Reihenfolge wie in der Ursprungsnotiz (grob, nicht streng chronologisch);
 > das Datum steht in jeder Überschrift.
 
-Übersicht: [[victron_node_red]] · Folgemonat: [[2026-08 Journal]]
+Übersicht: [[Victron Anlage]] · Folgemonat: [[2026-08 Journal]]
 
 ## Fronius-Ladedeckel-Automatik (SoC-gesteuert) (2026-07-08) ✅
 

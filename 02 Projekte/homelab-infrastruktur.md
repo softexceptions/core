@@ -136,7 +136,7 @@ der tatsächlich gearbeitet wurde — passend zum HA-iFrame. Beide liefen seit d
 
 Nach dem Stoppen geprüft: 119 läuft, `:7070` liefert HTTP 200, Wallbox `.145` erreichbar.
 Am Cerbo sollte jetzt nur noch **eine** `dbus-modbustcp`-Verbindung offen sein (s.
-[[victron_node_red]]).
+[[2026-08 Journal]]).
 
 **`notenit` ist der einzige Proxy-Host ohne Websockets.** Für eine Flask-Anwendung ohne
 Live-Updates ist das unkritisch — nur bewusst wissen sollte man es.
@@ -178,9 +178,9 @@ Reserve zurückgewinnen.
 
 ## Netzwerk-Vorfall 18.08.2026 und Fernzugriff
 
-Beide Abschnitte übernommen aus [[victron_node_red]] am 23.08.2026 — sie sind dort
+Beide Abschnitte übernommen aus [[Victron Anlage]] am 23.08.2026 — sie sind dort
 über eine Ausfallmeldung des Cerbo-Wächters entstanden, betreffen aber Netzwerk und
-Fernzugriff. Die Wächter-Seite des Vorfalls bleibt in [[victron_node_red]].
+Fernzugriff. Die Wächter-Seite des Vorfalls bleibt in [[Cerbo Wächter]].
 
 ## Ursache bewiesen: Firmware-Auto-Update des USW-24-PoE (18.08.2026)
 
@@ -311,4 +311,5 @@ Der Skill ist korrekt auf die **EU-Region** konfiguriert (`client_id=https://lay
 - [[02 Projekte/homelab-ansible]] — Deployment, Rollen, Sessions
 - [[02 Projekte/homelab-monitoring]] — Grafana, InfluxDB, Flux-Queries
 - [[02 Projekte/ipNginx]] — eigenes Nginx-Projekt (nicht der Proxy Manager)
-- [[02 Projekte/victron_node_red]] — Cerbo-Wächter, der den Ausfall vom 18.08. gemeldet hat
+- [[02 Projekte/Victron Anlage/Cerbo Wächter|Cerbo Wächter]] — hat den Ausfall vom 18.08. gemeldet
+- [[02 Projekte/Victron Anlage/Victron Anlage|Victron Anlage]] — PV-/Speicheranlage, Node-RED-Flows

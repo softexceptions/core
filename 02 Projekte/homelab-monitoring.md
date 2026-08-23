@@ -26,7 +26,7 @@ Zigbee-Steckdose → Zigbee2MQTT → Home Assistant
 |---|---|---|
 | InfluxDB | `http://192.168.2.119:8086` | Org: `ng`, Bucket: `homeassistant` |
 | Grafana | `http://192.168.2.214:3000` | Login: admin (Passwort im Passwort-Manager, siehe Session 2026-08-10) |
-| Grafana (in HA eingebettet) | http://192.168.2.186:8123/dashboard-grafana/0 | Home-Assistant-Dashboard mit iFrame-Einbettung, siehe „Grafana in die HA-Sidebar eingebettet" im [[victron_node_red|Victron-Node-RED-Projekt]] |
+| Grafana (in HA eingebettet) | http://192.168.2.186:8123/dashboard-grafana/0 | Home-Assistant-Dashboard mit iFrame-Einbettung, siehe „Grafana in die HA-Sidebar eingebettet" im [[Victron Anlage|Victron-Node-RED-Projekt]] |
 
 **Grafana Datasource:** InfluxDB v2, Query Language: Flux, URL `http://192.168.2.119:8086`
 
@@ -62,7 +62,7 @@ HA schreibt nur bei State Changes — zum Testen Steckdose kurz ein-/ausschalten
 |---|---|---|---|
 | EG Arbeitszimmer/Küche | Klimaanlage | `0xa085e3fffebc4574` | `eg-arbeitszimmer` |
 | EG Wohnzimmer | Klimaanlage | `0xa085e3fffebd16b8` | `eg-wohnzimmer` |
-| KG Heizungsraum | Brauchwasser-Wärmepumpe („BrauchwasserWP") | `0xa085e3fffeb7c870` | `bwwp-heizung` (provisioniert, siehe [[victron_node_red]]) |
+| KG Heizungsraum | Brauchwasser-Wärmepumpe („BrauchwasserWP") | `0xa085e3fffeb7c870` | `bwwp-heizung` (provisioniert, siehe Abschnitt „Brauchwasser-WP: Messstelle, Datenpfad, Zigbee-Störungen“) |
 
 Pro Steckdose:
 - `sensor.<prefix>_power` → Momentanleistung in W
@@ -706,7 +706,7 @@ nicht mehr aktualisiert wird.
    `_energy` tickt alle ~10 Min. selbstständig (Self-Reporting, Poll-Flow bleibt deaktiviert).
 2. **InfluxDB bekommt frische Punkte** für beide Entitäten (per Grafana-Datasource-Query
    verifiziert) — Datenpfad HA → InfluxDB → Grafana vollständig intakt.
-3. **Root Cause:** Das Shelly-Firmware-Update am 2026-07-12 (siehe [[victron_node_red]],
+3. **Root Cause:** Das Shelly-Firmware-Update am 2026-07-12 (siehe unten,
    „Fix umgesetzt 2026-07-12") hat den kWh-Zähler zurückgesetzt: 11:03 Uhr 7,41 kWh →
    `unavailable` → 13:13 Uhr 0, zählt seither neu. Die Panel-Query verwirft dadurch den
    heutigen Tag (`difference(nonNegative: true)` auf Tages-Endstände: 0,5 − 5,88 < 0 → None).
@@ -927,7 +927,7 @@ zeigt, ob überhaupt Punkte da sind; `|> first()` liefert den Aufzeichnungsbegin
 
 ## Brauchwasser-WP: Messstelle, Datenpfad, Zigbee-Störungen
 
-Übernommen aus [[victron_node_red]] am 23.08.2026 — die Blöcke sind dort über das
+Übernommen aus [[Victron Anlage]] am 23.08.2026 — die Blöcke sind dort über das
 Energie-Dashboard entstanden, gehören fachlich aber zu Monitoring und Zigbee.
 Die Wärme-Auswertung (Stillstandsverlust, Zirkulation) liegt in [[Brauchwasser-Wärmepumpe]].
 

@@ -126,7 +126,7 @@ die evcc-Session-Historie.** Details in [[homelab-ansible]].
 
 - [[homelab-ansible]] — evcc-Playbooks, Doppel-Instanz-Analyse, Zählervergleich
 - [[homelab-infrastruktur]] — Container, IPs, DHCP-Bereich der UDM Pro
-- [[victron_node_red]] — PV-/Speicheranlage, aus der der Ladestrom überwiegend kommt
+- [[Victron Anlage]] — PV-/Speicheranlage, aus der der Ladestrom überwiegend kommt
 
 ## Quellen
 

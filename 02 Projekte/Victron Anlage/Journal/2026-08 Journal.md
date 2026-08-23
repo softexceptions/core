@@ -14,7 +14,7 @@ Wächter, Ersparnis-Kennzahl, Härtung der Zähler-Flows, Verlust-Analysen.
 > einschließlich verworfener Hypothesen und später korrigierter Zahlen.
 > Was **aktuell gilt**, steht in den Themennotizen — nicht hier.
 
-Übersicht: [[victron_node_red]] · Vormonat: [[2026-07 Journal]]
+Übersicht: [[Victron Anlage]] · Vormonat: [[2026-07 Journal]]
 
 ## 2026-08-12 — Wandlungsverluste explodiert: VE.Bus-Zähler-Reset + blockierter Monotonie-Wächter
 

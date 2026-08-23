@@ -10,11 +10,11 @@ updated: 2026-08-23
 Stillstandsverlust der Brauchwasser-Wärmepumpe im Heizungskeller: Versuchsaufbau,
 Auswertung und der geplante Umbau (Siphon, Rückschlagventil, ΔT-Automatik).
 
-Ausgelagert aus [[victron_node_red]] am 23.08.2026 — der Verlust war dort über die
+Ausgelagert aus [[Victron Anlage]] am 23.08.2026 — der Verlust war dort über die
 Energiebilanz aufgefallen, ist aber ein Heizungs-, kein Node-RED-Thema.
 
 **Zusammenhänge:**
-- Messwert-Herkunft (Zigbee-Dose, Energiebilanz): [[victron_node_red]]
+- Messwert-Herkunft (Zigbee-Dose, Energiebilanz): [[Victron Anlage]]
 - Datenpfad der Dose, Grafana-Dashboard: [[homelab-monitoring]]
 - Bedienungsanleitungs-App für BW-Wärmepumpen: [[bwt]]
 
@@ -24,7 +24,7 @@ Energiebilanz aufgefallen, ist aber ein Heizungs-, kein Node-RED-Thema.
 
 ## Versuchsaufbau: BW-WP-Stillstandsverlust eingrenzen — Stufentest Pumpe → Hahn (2026-07-26) ✅ ABGESCHLOSSEN (Auswertung 13.08.2026)
 
-**Ziel:** Die 242 W Dauerverlust der Brauchwasser-Wärmepumpe (hergeleitet in [[victron_node_red#5. BW-WP: 54 % des Stroms halten nur die Temperatur]]) auf ihre Ursache zurückführen. Kandidaten: (a) Zirkulationspumpe läuft mehr als angenommen, (b) Schwerkraftzirkulation durch die stillstehende Zirkulationsleitung, (c) Einrohrzirkulation im blanken Warmwasser-Vorlauf bzw. Speicherdämmung.
+**Ziel:** Die 242 W Dauerverlust der Brauchwasser-Wärmepumpe (hergeleitet in [[2026-07 Journal#5. BW-WP: 54 % des Stroms halten nur die Temperatur]]) auf ihre Ursache zurückführen. Kandidaten: (a) Zirkulationspumpe läuft mehr als angenommen, (b) Schwerkraftzirkulation durch die stillstehende Zirkulationsleitung, (c) Einrohrzirkulation im blanken Warmwasser-Vorlauf bzw. Speicherdämmung.
 
 **Design — von Norbert vorgegeben, besser als mein ursprünglicher Vorschlag.** Ich hatte „Hahn zu + Pumpe stromlos" in einem Schritt vorgeschlagen; das hätte einen Gesamteffekt gemessen, ohne die Anteile zu trennen. Norberts Staffelung isoliert schrittweise:
 
