@@ -39,6 +39,26 @@ Ersparnis-Kennzahl und Anlagenüberwachung laufen über dieselbe Node-RED-Instan
 - **2× SmartSolar MPPT 250/70** (DC, an Batterie): „MPPT Ost" (Instanz 278) 2,52 kWp, „MPPT West" (277) 2,52 kWp. 31-Tage-Peaks: Ost 3.098 W, West 2.828 W (per Venus-MQTT `/History/Daily/n/MaxPower` ausgelesen — Keepalive an `R/c0619ab31b3b/keepalive`, dann `N/.../solarcharger/#`).
 - Pro Seite gesamt: **12,6 kWp Ost, 12,6 kWp West**.
 
+## PV-Prognose
+
+**Beide Dienste laufen dauerhaft parallel** — bestätigt von Norbert am 23.08.2026.
+
+| Dienst | Rolle | Entitäten |
+|---|---|---|
+| **Solcast** (HACS `BJReplay/ha-solcast-solar`) | **primär** — Prognoselinie im Energie-Dashboard, deckungsgleich mit VRM | `sensor.solcast_pv_forecast_prognose_heute` / `_morgen` |
+| **Forecast.Solar** (Core-Integration, 2 Einträge Ost/West) | Zweitmeinung für den **Ertrag des nächsten Tages** | min_max-Helfer `sensor.pv_prognose_heute` / `_morgen` |
+
+Der frühere Plan, nach dem Vergleichszeitraum den „Verlierer zu entfernen", ist
+damit **hinfällig** — Forecast.Solar bleibt bewusst als zweite Quelle bestehen.
+
+⚠️ **Solcast-Azimut-Konvention: gegen den Uhrzeigersinn positiv** (0 = Nord,
+Ost = −90). Hobbyist-Account: max. 2 Sites, 10 API-Abrufe/Tag.
+
+> [!note] Ost-Horizont („Odenwald-Verdacht") — nicht bestätigt
+> Die Vermutung, ein Ost-Horizont von 4–6° koste 2–5 % Ost-Tagesertrag durch
+> späteren Sonnenaufgang, hat sich in der Beobachtung **nicht bestätigt**
+> (Norbert, 23.08.2026). Es ist keine Erwartungskorrektur nötig.
+
 ## Begriffe / Hausgeräte
 - **„SK" = Split-Klimaanlage** (nicht Stromkreis!). Zwei Stück, per Zigbee-Messsteckdose erfasst: `sensor.0xa085e3fffebc4574_power` (**SK AZ** = Arbeitszimmer/Küche) und `sensor.0xa085e3fffebd16b8_power` (**SK WZ** = Wohnzimmer). Beide als individual-Kreise in der PFCP-Karte (`energie-sys`), Icon mdi:air-conditioner. Ihre kWh-Zähler (`..._energy`) sind Kandidaten für device_consumption im Energie-Dashboard (noch nicht eingetragen).
 

@@ -1007,3 +1007,17 @@ Faktor 4,4 zugunsten des Ladens → die Lader-Zuschaltung bei schlechtem Wetter 
 
 → Verschoben nach [[homelab-infrastruktur#Netzwerk-Vorfall 18.08.2026 und Fernzugriff]] (23.08.2026).
 
+
+## Prognose-Frage geklärt: beide Dienste bleiben (23.08.2026)
+
+Zwei seit Juli offene Punkte von Norbert beantwortet:
+
+- **Forecast.Solar wird behalten** — nicht als unterlegener Vergleichskandidat,
+  sondern gezielt, um den Ertrag des nächsten Tages zu sehen. Solcast bleibt die
+  primäre Prognose im Energie-Dashboard. Der Plan „nach dem Sonnentage-Test den
+  Verlierer entfernen" ist damit hinfällig.
+- **Odenwald-Verdacht nicht bestätigt.** Der vermutete Ost-Horizont-Effekt
+  (4–6°, geschätzt 2–5 % Ost-Tagesertrag durch späteren Sonnenaufgang) zeigte
+  sich in der Beobachtung nicht. Keine Erwartungskorrektur nötig.
+
+Gültiger Stand jetzt in [[Anlage und Topologie#PV-Prognose]].
