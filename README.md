@@ -1,3 +1,8 @@
+---
+tags: [meta, setup]
+date: 2026-05-08
+---
+
 # core
 
 Diese Datei richtet dir automatisch ein personalisiertes Vault in Obsidian ein.

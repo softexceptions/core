@@ -1,5 +1,7 @@
 ---
 tags: [homelab, proxmox, infrastruktur]
+status: aktiv
+date: 2026-08-18
 ---
 
 # Homelab-Infrastruktur

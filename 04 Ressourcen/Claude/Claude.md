@@ -1,5 +1,6 @@
 ---
 tags: [ressource, claude, ai]
+date: 2026-05-08
 ---
 
 # Claude

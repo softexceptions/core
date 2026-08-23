@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht, programmiersprachen, architektur]
+date: 2026-06-22
 ---
 
 # Sprachwahl begründen — Fallbeispiel StreamPrometh

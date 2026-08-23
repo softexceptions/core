@@ -77,7 +77,7 @@ der Container angefasst.
 
 **1. Version und Release Notes prüfen**
 
-```bash
+```
 curl -s https://api.github.com/repos/dani-garcia/vaultwarden/releases/latest | grep '"tag_name"'
 gh api repos/dani-garcia/vaultwarden/releases/tags/<version> --jq '.body' | head -40
 ```
@@ -87,19 +87,19 @@ jeweils Security-Advisories im Kopf, 1.37 zusätzlich ein harter Client-Kompatib
 
 **2. Tag setzen** in `roles/vaultwarden_deploy/defaults/main.yml`:
 
-```yaml
+```
 vaultwarden_image_tag: "1.38.0"
 ```
 
 **3. Committen und pushen**
 
-```bash
+```
 git commit -am "chore: Vaultwarden auf 1.38.0 aktualisiert" && git push
 ```
 
 **4. Ausrollen**
 
-```bash
+```
 ssh root@192.168.2.101 'cd /root/homelab-ansible && git pull && ansible-playbook playbooks/vaultwarden.yml'
 ```
 
@@ -113,13 +113,13 @@ Ein Schema-Rollback gibt es **nicht** — Vaultwarden migriert beim Start vorwä
 Versionen öffnen die Datei danach nicht mehr. Vor mehreren Minor-Versionen auf einmal oder
 wenn die Notes Migrationen erwähnen:
 
-```bash
+```
 F=~/vw_backup_$(date +%F_%H%M).tar.gz; ssh root@192.168.2.101 "ssh root@192.168.2.17 'docker compose -f /opt/vaultwarden-docker/docker-compose.yml stop; tar czf - -C /opt/vaultwarden-docker data; docker compose -f /opt/vaultwarden-docker/docker-compose.yml start'" > "$F" && ls -lh "$F"
 ```
 
 Prüfen statt vertrauen — Archiv auspacken und die Datenbank befragen:
 
-```bash
+```
 sqlite3 db.sqlite3 "pragma integrity_check; select count(*) from ciphers;"
 ```
 
@@ -190,7 +190,7 @@ und verfällt mit dem ersten Update, das die Datenbank anfasst.
 **VMID ≠ IP** — VMID 112 hat IP `192.168.2.119` (DHCP-Lease fest auf MAC). VMID 119 ist `evcc`, nicht InfluxDB — Verwechslungsgefahr.
 
 **Initialer SSH-Key-Inject via `pct push`** — Standardweg wenn Passwort-Auth deaktiviert und kein Key vorhanden:
-```bash
+```
 scp ~/.ssh/id_rsa.pub root@192.168.2.241:/tmp/ak.pub
 ssh root@192.168.2.241 "pct push 112 /tmp/ak.pub /tmp/ak.pub"
 ssh root@192.168.2.241 "pct exec 112 -- bash -c 'mkdir -p /root/.ssh; cat /tmp/ak.pub >> /root/.ssh/authorized_keys; chmod 700 /root/.ssh; chmod 600 /root/.ssh/authorized_keys'"
@@ -279,7 +279,7 @@ ssh root@192.168.2.241 "pct exec 112 -- bash -c 'mkdir -p /root/.ssh; cat /tmp/a
 **Finale Flux-Queries (mit Timezone-Fix):**
 
 Gauge:
-```flux
+```
 from(bucket: "homeassistant")
   |> range(start: -12h)
   |> filter(fn: (r) => r["_measurement"] == "W")
@@ -289,7 +289,7 @@ from(bucket: "homeassistant")
 ```
 
 Tagesverbrauch:
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -302,7 +302,7 @@ from(bucket: "homeassistant")
 ```
 
 Wochenverbrauch:
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -315,7 +315,7 @@ from(bucket: "homeassistant")
 ```
 
 Monatsverbrauch:
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -384,7 +384,7 @@ from(bucket: "homeassistant")
 **`state_class: total_increasing`** — Voraussetzung für `statistics-graph`. Sensor `0xa085e3fffebc4574_energy` hat diese Klasse — HA-Langzeitstatistiken funktionieren direkt.
 
 **HA Gauge-Karte (Momentanleistung):**
-```yaml
+```
 type: gauge
 entity: sensor.0xa085e3fffebc4574_power
 name: Momentanleistung
@@ -398,7 +398,7 @@ severity:
 ```
 
 **HA statistics-graph-Karte (Tagesverbrauch):**
-```yaml
+```
 type: statistics-graph
 entities:
   - entity: sensor.0xa085e3fffebc4574_energy
@@ -412,7 +412,7 @@ chart_type: bar
 ```
 
 **HA statistics-graph-Karte (Tagesverbrauch) — wiederverwendbares Muster:**
-```yaml
+```
 type: statistics-graph
 entities:
   - entity: sensor.<entity_id>_energy
@@ -714,7 +714,7 @@ wieder zusammenpassen — der nächste Ladevorgang ist die Gegenprobe.
 > [!important] Folgethema: Abrechnung gegenüber dem Mieter
 > Aus dieser Analyse ergab sich die Frage, ob die openWB Pro überhaupt eichrechtskonform ist
 > (Antwort nach derzeitiger Erkenntnis: nein, nur MID). Das ist ein eigenes Vorhaben und steht
-> in [[Wallbox_Mieterabrechnung]]. **Für Abrechnungszwecke immer die openWB-Zählerstände
+> in [[Wallbox Mieterabrechnung]]. **Für Abrechnungszwecke immer die openWB-Zählerstände
 > nehmen, nie die evcc-Session-Historie.**
 
 **`upgrade: dist` hebelt die eigene Update-Choreografie aus.** Der Testlauf sollte nur von
@@ -734,4 +734,4 @@ greift genau dieser Fehler.
 
 - [[02 Projekte/homelab-monitoring]] — Betrieb: Flux-Queries, Grafana-Dashboards, Entity-IDs
 - [[03 Bereiche/Unterricht/Ansible]] — Rollen-Architektur, Stolperfallen, Unterrichtsbeispiele
-- [[02 Projekte/Notenerfassung_IT]] — App die auf `noten_it_lxc` läuft
+- [[02 Projekte/Notenerfassung IT]] — App die auf `noten_it_lxc` läuft

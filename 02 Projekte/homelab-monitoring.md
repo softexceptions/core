@@ -39,7 +39,7 @@ Zigbee-Steckdose → Zigbee2MQTT → Home Assistant
 
 **Entity-Filter** liegt weiterhin in `configuration.yaml`:
 
-```yaml
+```
 influxdb:
   include:
     entities:
@@ -183,7 +183,7 @@ Transform tab → Add transformation → Convert field type → Time → String 
 
 ### Momentanleistung (Gauge)
 
-```flux
+```
 from(bucket: "homeassistant")
   |> range(start: -12h)
   |> filter(fn: (r) => r["_measurement"] == "W")
@@ -204,7 +204,7 @@ Das kWh-Measurement ist ein kumulativer Zählerstand. Korrektes Muster:
 
 #### Tagesverbrauch (`range: -8d`)
 
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -224,7 +224,7 @@ from(bucket: "homeassistant")
 
 #### Wochenverbrauch (`range: -9w`, ISO-KW, Montag-Start)
 
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -252,7 +252,7 @@ from(bucket: "homeassistant")
 
 #### Monatsverbrauch (`range: -13mo`)
 
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -279,7 +279,7 @@ from(bucket: "homeassistant")
 
 #### Jahresverbrauch (`range: -3y`)
 
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -422,7 +422,7 @@ gruppiertes Balkendiagramm, Preise live über Dashboard-Textfelder editierbar.
 
 ### Flux-Muster (Preis direkt einrechnen)
 
-```flux
+```
 import "timezone"
 
 from(bucket: "homeassistant")
@@ -786,7 +786,7 @@ unverhältnismäßig für einen einmaligen Betrag.
 
 ### Fix (umgesetzt, Tages-Panels beider SK-Dashboards)
 
-```flux
+```
   |> range(start: -31d)           // RECHENfenster, nicht Anzeigefenster (Begründung unten)
   ...
   |> aggregateWindow(every: 1d, fn: last, createEmpty: true,

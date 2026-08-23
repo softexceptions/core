@@ -4,6 +4,7 @@ status: aktiv
 erstellt: 2026-03-22
 deployed: true
 url: https://energie.softexceptions.com
+date: 2026-05-08
 ---
 
 # Energielandingpage
@@ -33,7 +34,7 @@ Statische Seite (eine `index.html` + `images/` + `favicon.svg`), ausgeliefert pe
 
 **Deploy-Befehl** (nur geänderte Dateien via rsync über SSH):
 
-```bash
+```
 rsync -avz --checksum /home/norbert/Code/Projekt-Erneuerbare/index.html \
   root@192.168.2.26:/var/www/erneuerbare/index.html
 ```

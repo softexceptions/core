@@ -1,5 +1,6 @@
 ---
 tags: [ressource, claude, prompting]
+date: 2026-05-08
 ---
 
 # Prompt Engineering

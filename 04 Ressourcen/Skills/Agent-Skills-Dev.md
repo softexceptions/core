@@ -1,5 +1,6 @@
 ---
 tags: [ressource, skills, entwicklung]
+date: 2026-05-08
 ---
 
 # Agent Skills Entwicklung
@@ -20,7 +21,7 @@ Wie ich spezialisierte Skills für meine Projekte entwickle.
 
 Ein Skill ist eine Markdown-Datei mit YAML-Frontmatter:
 
-```markdown
+```
 ---
 name: mein-skill
 description: |
@@ -73,7 +74,7 @@ Aufruf im Chat: `/vue-solid` oder `/python-solid`
 
 Basierend auf dem vorhandenen `vue-solid`-Skill:
 
-```markdown
+```
 ---
 name: vue-solid
 description: |

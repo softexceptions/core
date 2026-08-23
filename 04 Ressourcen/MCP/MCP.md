@@ -1,5 +1,6 @@
 ---
 tags: [ressource, mcp, integration]
+date: 2026-05-08
 ---
 
 # MCP — Model Context Protocol

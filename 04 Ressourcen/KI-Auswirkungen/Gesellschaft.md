@@ -1,5 +1,6 @@
 ---
 tags: [ressource, gesellschaft, ethik]
+date: 2026-05-08
 ---
 
 # KI und Gesellschaft

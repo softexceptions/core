@@ -1,5 +1,6 @@
 ---
 tags: [archiv]
+date: 2026-05-08
 ---
 
 # Alte Projekte und Code-Migration

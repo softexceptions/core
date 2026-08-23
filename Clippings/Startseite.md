@@ -7,6 +7,7 @@ created: 2026-05-22
 description: "Selbstständige Berufliche Schule für Elektrotechnik und Informationstechnik"
 tags:
   - "clippings"
+date: 2026-05-23
 ---
 ## News und aktuelle Termine
 

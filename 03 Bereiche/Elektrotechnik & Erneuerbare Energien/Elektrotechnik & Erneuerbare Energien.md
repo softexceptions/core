@@ -1,5 +1,6 @@
 ---
 tags: [bereich, elektrotechnik, erneuerbare-energien, pv, victron]
+date: 2026-08-18
 ---
 
 # Elektrotechnik & Erneuerbare Energien

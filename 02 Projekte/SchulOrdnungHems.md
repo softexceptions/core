@@ -9,6 +9,7 @@ status: aktiv
 stand: 2026-05-28
 deployed: true
 url: https://ordnung.softexceptions.com
+date: 2026-05-08
 ---
 
 # SchulOrdnungHems
@@ -119,7 +120,7 @@ http://192.168.2.45:5173/    (mit --host Flag)
 
 ### Deploy-Befehl (Frontend)
 
-```bash
+```
 cd /home/norbert/Code/SchulOrdnungHems/frontend && npm run build
 scp -r /home/norbert/Code/SchulOrdnungHems/frontend/dist/* root@192.168.2.242:/var/www/schulordnung/
 ```
@@ -130,7 +131,7 @@ Danach im Browser **Strg+Shift+R** (Hard Reload) ausführen.
 
 Bei Änderungen an einzelnen Backend-Dateien (z. B. `schulordnung_data.py`):
 
-```bash
+```
 # 1. Geänderte Datei kopieren (Pfad anpassen falls andere Datei)
 scp /home/norbert/Code/SchulOrdnungHems/backend/app/data/schulordnung_data.py \
     root@192.168.2.242:/opt/schulordnung/app/data/schulordnung_data.py

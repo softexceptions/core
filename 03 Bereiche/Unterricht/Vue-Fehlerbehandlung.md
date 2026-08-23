@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht, vue, fehlerbehandlung, async]
+date: 2026-05-13
 ---
 
 # Fehlerbehandlung in Vue Composables
@@ -15,7 +16,7 @@ Unterrichtsbeispiel: Warum jeder `async`-API-Call ein `try/catch/finally` brauch
 
 ## ❌ Vorher — Stilles Versagen
 
-```ts
+```
 async function submit() {
   result.value     = await quizService.evaluate(answers.value)
   showResult.value = true
@@ -25,7 +26,7 @@ async function submit() {
 
 ## ✅ Nachher — Drei-Zonen-Pattern
 
-```ts
+```
 async function submit() {
 
   // Zone 1: VOR dem Call — UI sperren

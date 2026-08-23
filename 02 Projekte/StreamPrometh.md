@@ -8,6 +8,7 @@ tags:
   - schule
 status: in-progress
 stand: 2026-06-03
+date: 2026-06-03
 ---
 
 # StreamPrometh
@@ -208,7 +209,7 @@ idle
 
 ### WebSocket-Nachrichten-Format
 
-```jsonc
+```
 // Senden (Laptop → Board via KVS)
 {
   "action": "SDP_OFFER",       // oder SDP_ANSWER, ICE_CANDIDATE
@@ -314,7 +315,7 @@ path = "src/bin/board_sim.rs"
 8. Nach N Frames oder Timeout: Status ausgeben
 
 **Starten:**
-```bash
+```
 # Terminal 1: Simulator starten
 cargo run --bin board-sim
 
@@ -437,7 +438,7 @@ pipewiresrc fd={fd} path={node_id} do-timestamp=true
 
 ### SOLID-Architektur in streaming.rs
 
-```rust
+```
 trait ScreenCapture  { async fn start() -> Result<(OwnedFd, u32)> }
 trait PipelineFactory { fn build(enc, pre, fd, node_id, board_ip, port) -> String }
 

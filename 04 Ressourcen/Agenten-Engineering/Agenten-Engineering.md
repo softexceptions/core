@@ -1,5 +1,6 @@
 ---
 tags: [ressource, agenten, engineering]
+date: 2026-05-08
 ---
 
 # Agenten Engineering

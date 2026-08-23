@@ -1,3 +1,7 @@
+---
+tags: [meta, einstieg]
+date: 2026-05-08
+---
 
 # Willkommen in core
 

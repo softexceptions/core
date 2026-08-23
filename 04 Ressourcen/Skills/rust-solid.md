@@ -53,8 +53,8 @@ Oder via `Box<dyn Trait>` (dynamisch, flexibel für komplexe Graphen).
 
 ## Verwandte Ressourcen
 
-- [[../tdd/SKILL]] — TDD (Rust: cargo test + mockall)
-- [[../python-solid/SKILL]] — Python SOLID (Vergleich: ABC/Protocol vs. Trait)
-- [[../flutter-solid/SKILL]] — Flutter SOLID (Vergleich: abstract class vs. Trait)
+- [[tdd]] — TDD (Rust: cargo test + mockall)
+- [[python-solid]] — Python SOLID (Vergleich: ABC/Protocol vs. Trait)
+- [[flutter-solid]] — Flutter SOLID (Vergleich: abstract class vs. Trait)
 - [[../Agent-Skills-Dev]] — Skill-Entwicklung allgemein
 - [[../Skills]] — Übersicht aller Skills

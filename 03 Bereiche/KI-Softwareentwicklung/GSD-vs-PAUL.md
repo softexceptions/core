@@ -1,5 +1,6 @@
 ---
 tags: [bereich, werkzeuge]
+date: 2026-05-08
 ---
 
 # GSD vs. PAUL

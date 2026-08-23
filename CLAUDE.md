@@ -1,5 +1,6 @@
 ---
 description: Vault-Kontext für Norberts core
+date: 2026-05-08
 ---
 
 # Vault Context

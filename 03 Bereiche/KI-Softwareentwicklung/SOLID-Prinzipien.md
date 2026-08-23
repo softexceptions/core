@@ -1,5 +1,6 @@
 ---
 tags: [bereich, architektur]
+date: 2026-05-08
 ---
 
 # SOLID-Prinzipien

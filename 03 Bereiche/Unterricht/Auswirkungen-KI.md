@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht, gesellschaft]
+date: 2026-05-08
 ---
 
 # Auswirkungen von KI auf Beruf & Gesellschaft

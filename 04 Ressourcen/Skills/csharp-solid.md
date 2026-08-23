@@ -54,7 +54,7 @@ builder.Services.AddScoped<IChargingStationRepository, OpenChargeMapRepository>(
 
 ## Verwandte Ressourcen
 
-- [[../tdd/SKILL]] — TDD (C#: xUnit + Moq)
-- [[../java-solid/SKILL]] — Java SOLID (Vergleich: sehr ähnlich, andere Konventionen)
-- [[../python-solid/SKILL]] — Python SOLID (Vergleich: ABC/Protocol vs. interface)
+- [[tdd]] — TDD (C#: xUnit + Moq)
+- [[java-solid]] — Java SOLID (Vergleich: sehr ähnlich, andere Konventionen)
+- [[python-solid]] — Python SOLID (Vergleich: ABC/Protocol vs. interface)
 - [[../Skills]] — Übersicht aller Skills

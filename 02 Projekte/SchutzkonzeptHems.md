@@ -8,6 +8,7 @@ status: aktiv
 stand: 2026-05-20
 deployed: true
 url: https://schutz.softexceptions.com
+date: 2026-05-19
 ---
 
 # Schutzkonzept HEMS — Landing Page
@@ -43,7 +44,7 @@ Landing Page für das **Schutzkonzept gegen Gewalt und sexuellen Missbrauch** de
 
 ## Architektur
 
-SOLID-Schichten gemäß [[vue-solid/SKILL|vue-solid]]-Skill:
+SOLID-Schichten gemäß [[vue-solid|vue-solid]]-Skill:
 
 ```
 src/
@@ -80,7 +81,7 @@ src/
 
 ## Frontmatter-Felder (vollständig)
 
-```yaml
+```
 nr: 1
 titel: Vorgehen bei Verdacht
 slug: verdacht

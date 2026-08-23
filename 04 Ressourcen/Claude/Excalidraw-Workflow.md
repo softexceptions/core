@@ -1,3 +1,8 @@
+---
+tags: [ressource, claude, excalidraw, diagramme]
+date: 2026-05-10
+---
+
 # Excalidraw-Workflow mit Claude
 
 ## Kernregel: Iterativ, nicht monolithisch

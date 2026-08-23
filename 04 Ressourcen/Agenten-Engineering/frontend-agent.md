@@ -61,6 +61,6 @@ ln -s /home/norbert/Code/ipNINX/core/.claude/agents/frontend-agent.md \
 
 ## Verwandte Ressourcen
 
-- [[Skills/vue-solid/SKILL]] — Vollständige Architektur-Referenz
+- [[vue-solid]] — Vollständige Architektur-Referenz
 - [[Agent-Skills-Dev]] — Wie Agenten und Skills entwickelt werden
 - [[Skills/Skills]] — Übersicht aller installierten Skills

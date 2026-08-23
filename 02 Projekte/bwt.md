@@ -1,3 +1,9 @@
+---
+tags: [projekt/aktiv, flutter, dart, waermepumpe, dokumentation]
+status: aktiv
+date: 2026-06-03
+---
+
 # BWT – Brauchwasser-Wärmepumpe App
 
 ## Ziel

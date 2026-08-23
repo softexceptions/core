@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht]
+date: 2026-05-08
 ---
 
 # Unterricht
@@ -39,7 +40,7 @@ Ziel: Absolventen:innen, die nicht nur Code schreiben können, sondern auch:
 - [[OOP-in-Rust]] — Ist Rust objektorientiert? Kapselung und Traits statt Vererbung, am Fallbeispiel [[StreamPrometh]]
 - [[Sprachwahl-begründen-StreamPrometh]] — wie man die Wahl einer Programmiersprache begründet, gleiches Fallbeispiel
 - [[Vue-Fehlerbehandlung]] — warum jeder `async`-Call ein `try/catch/finally` braucht
-- [[Ansible]] — entstanden beim Deployment der [[Notenerfassung_IT|Notenerfassung IT]]
+- [[Ansible]] — entstanden beim Deployment der [[Notenerfassung IT|Notenerfassung IT]]
 
 **Diagramme** (aus der eigenen Anlage abgeleitet — reale Beispiele statt Lehrbuchfälle)
 - [[MQTT-Bridge-Diagramm]] — Cerbo GX ↔ Proxmox, aus [[Victron Anlage]]

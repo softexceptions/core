@@ -13,7 +13,7 @@ Wikilinks sind Obsidians System für interne Verknüpfungen zwischen Notizen. Si
 
 ## Syntax
 
-```markdown
+```
 [[Notizname]]                        Link zur Notiz
 [[Notizname|Anzeigetext]]            Eigener Linktext
 [[Notizname#Überschrift]]            Link zu einer Überschrift
@@ -25,7 +25,7 @@ Wikilinks sind Obsidians System für interne Verknüpfungen zwischen Notizen. Si
 
 Mit `!` wird der Inhalt direkt eingebettet statt nur verlinkt:
 
-```markdown
+```
 ![[Notizname]]                       Ganze Notiz einbetten
 ![[Notizname#Abschnitt]]             Abschnitt einbetten
 ![[bild.png]]                        Bild einbetten
@@ -40,7 +40,7 @@ Mit `!` wird der Inhalt direkt eingebettet statt nur verlinkt:
 
 ## Beispiele aus diesem Vault
 
-```markdown
+```
 [[00 Kontext/Über mich]]             Profil-Notiz
 [[02 Projekte/SchulOrdnungHems]]     Aktives Projekt
 [[03 Bereiche/Unterricht/Unterricht]] Bereichs-Übersicht

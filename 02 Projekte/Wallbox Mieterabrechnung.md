@@ -7,6 +7,7 @@ tags:
   - recht
 status: offen
 stand: 2026-08-17
+date: 2026-08-18
 ---
 
 # Wallbox-Abrechnung gegenüber dem Mieter

@@ -68,7 +68,7 @@ SQLAlchemy async + Repository Pattern (Option A):
 
 ## Verwandte Ressourcen
 
-- [[../Skills/python-solid/SKILL]] — Vollständige Architektur-Referenz
-- [[../Skills/tdd/SKILL]] — TDD (separat aufrufen mit /tdd)
+- [[python-solid]] — Vollständige Architektur-Referenz
+- [[tdd]] — TDD (separat aufrufen mit /tdd)
 - [[frontend-agent]] — Frontend-Pendant (Vue 3 + TypeScript)
 - [[../Agent-Skills-Dev]] — Agenten-Entwicklung allgemein

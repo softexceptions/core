@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht, curriculum]
+date: 2026-05-08
 ---
 
 # Lehrplan mit KI-Integration

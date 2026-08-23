@@ -5,7 +5,7 @@ date: 2026-06-19
 
 # Ansible
 
-Entstanden beim Deployment der [[02 Projekte/Notenerfassung_IT|Notenerfassung IT]] auf Proxmox.
+Entstanden beim Deployment der [[02 Projekte/Notenerfassung IT|Notenerfassung IT]] auf Proxmox.
 
 ## Kernidee: Warum Rollen?
 
@@ -55,7 +55,7 @@ homelab-ansible/
 
 ## Tags — selektives Ausführen
 
-```bash
+```
 # Nur Docker installieren (ohne LXC neu erstellen):
 ansible-playbook site.yml -i hosts.ini --tags docker
 
@@ -75,7 +75,7 @@ ansible-playbook site.yml -i hosts.ini --tags lxc --ask-vault-pass
 
 `group_vars/lxc_containers.yml` gilt automatisch für **alle Hosts** in der `[lxc_containers]`-Gruppe in `hosts.ini`:
 
-```yaml
+```
 # group_vars/lxc_containers.yml
 ansible_user: root
 ansible_python_interpreter: auto_silent
@@ -86,7 +86,7 @@ Das ersetzt die verstreuten `vars:` und `ansible_*`-Parameter in jedem Playbook.
 
 ## Defaults vs. Vars — Priorität in Ansible
 
-```yaml
+```
 # roles/proxmox_lxc/defaults/main.yml (niedrigste Priorität)
 lxc_vmid: 900
 lxc_memory: 1024
@@ -103,7 +103,7 @@ vars:
 
 ### 1. apt_key existiert in Debian 13 nicht mehr
 
-```yaml
+```
 # FALSCH (deprecated, auf Debian 13 gar nicht vorhanden):
 - ansible.builtin.apt_key:
     url: https://download.docker.com/linux/debian/gpg
@@ -126,7 +126,7 @@ vars:
 
 Docker-Volume-Initialisierung: Wenn ein Volume beim ersten Mount leer ist, kopiert Docker den Image-Inhalt hinein. Eine mitgebackene `notenerfassung.db` wird so zur "Produktionsdatenbank".
 
-```yaml
+```
 # Immer explizit ausschließen:
 rsync_opts:
   - "--exclude=*.db"
@@ -174,7 +174,7 @@ Das macht Ansible ideal für **wiederholbare Deployments** und **Infrastructure 
 
 Ein Handler ist ein Task der nur läuft wenn er explizit per `notify` benachrichtigt wurde — und selbst dann nur **einmal**, am Ende des Plays.
 
-```yaml
+```
 # roles/docker_install/tasks/main.yml
 - name: Docker installieren
   ansible.builtin.apt:
@@ -194,7 +194,7 @@ Ein Handler ist ein Task der nur läuft wenn er explizit per `notify` benachrich
 
 ### Meta-Abhängigkeiten — explizite Role-Dependencies
 
-```yaml
+```
 # roles/app_deploy/meta/main.yml
 dependencies:
   - role: docker_install
@@ -204,7 +204,7 @@ dependencies:
 
 ### import_playbook — skalierbare Struktur
 
-```yaml
+```
 # site.yml — bleibt immer schlank
 - import_playbook: playbooks/noten_it.yml
 - import_playbook: playbooks/vaultwarden.yml   # jeder Dienst bekommt sein Playbook
@@ -214,7 +214,7 @@ dependencies:
 
 ### ansible.cfg — Konventionen statt Parameter
 
-```ini
+```
 # ansible.cfg im Projektverzeichnis
 [defaults]
 inventory  = hosts.ini
@@ -240,7 +240,7 @@ Zwei Deployment-Quellen erzeugen inkonsistente Zustände — die häufigste Ursa
 
 ### git-basiertes Deployment statt rsync
 
-```yaml
+```
 # Vorher: rsync vom Desktop (Desktop-Pfad hardcodiert)
 - ansible.posix.synchronize:
     src: "/home/norbert/Code/Notenerfassung_IT/"
@@ -262,7 +262,7 @@ Zwei Deployment-Quellen erzeugen inkonsistente Zustände — die häufigste Ursa
 
 ### 4. Hardcodierter SSH-Key-Pfad in group_vars
 
-```yaml
+```
 # FALSCH — funktioniert nur auf dem Desktop:
 ansible_ssh_private_key_file: "/home/norbert/.ssh/id_rsa"
 
@@ -276,7 +276,7 @@ ansible_python_interpreter: auto_silent
 Wenn `dest` existiert aber kein Git-Repo ist (z.B. nach rsync-Deployment), hängt der git-Task.
 
 **Lösung:** Verzeichnis vorher umbenennen:
-```bash
+```
 ssh root@<host> "mv /opt/app /opt/app-backup"
 ```
 
@@ -285,14 +285,14 @@ ssh root@<host> "mv /opt/app /opt/app-backup"
 HTTPS-Clones auf private Repos hängen — git wartet auf Zugangsdaten die nie kommen.
 
 **Lösung: GitHub Deploy Key**
-```bash
+```
 # Auf dem Managed Node (wo git clone läuft):
 ssh-keygen -t ed25519 -f ~/.ssh/github_deploy -N "" -C "deploy key"
 cat ~/.ssh/github_deploy.pub
 # → Public Key in GitHub: Repo → Settings → Deploy keys
 ```
 
-```yaml
+```
 # In der Role:
 app_repo: "git@github.com:user/repo.git"   # SSH-URL, nicht HTTPS
 app_deploy_key: "/root/.ssh/github_deploy"
@@ -300,7 +300,7 @@ app_deploy_key: "/root/.ssh/github_deploy"
 
 ### 7. Secrets niemals in docker-compose.yml
 
-```yaml
+```
 # GEFÄHRLICH — landet in GitHub:
 environment:
   - API_KEY=meinGeheimesPasswort
@@ -314,7 +314,7 @@ Die `.env` wird von Ansible erzeugt (nicht in Git), der Wert kommt aus dem Ansib
 
 ### 8. Docker Named Volumes überleben Deployments
 
-```yaml
+```
 # docker-compose.yml
 volumes:
   - db-data:/app/data    # Named Volume — unabhängig vom Code-Verzeichnis

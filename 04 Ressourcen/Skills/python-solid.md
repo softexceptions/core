@@ -47,4 +47,4 @@ ln -s /home/norbert/Code/ipNINX/core/.claude/skills/python-solid \
 
 - [[../Agent-Skills-Dev]] — Skill-Entwicklung allgemein
 - [[../Skills]] — Übersicht aller Skills
-- [[../tdd/SKILL]] — TDD-Skill (integriert mit python-solid)
+- [[tdd]] — TDD-Skill (integriert mit python-solid)

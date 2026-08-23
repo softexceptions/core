@@ -5,6 +5,7 @@ tags:
   - aktiv
 status: in-progress
 stand: [YYYY-MM-DD]
+date: 2026-05-13
 ---
 
 # [Projektname]

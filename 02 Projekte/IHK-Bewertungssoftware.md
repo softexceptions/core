@@ -4,6 +4,7 @@ status: aktiv
 erstellt: 2026-04-27
 deployed: true
 url: https://ihkmatrix.softexceptions.com
+date: 2026-05-08
 ---
 
 # IHK-Bewertungssoftware
@@ -181,7 +182,7 @@ Zustands-/timing-abhängiger Bug (Heisenbug), kein deterministischer — sonst h
 **Last ist Begünstiger, nicht Auslöser:** Gleichzeitigkeit ist nicht nötig. Entscheidend ist, dass Task B **dicht genug** auf Task A folgt, damit die Connection (Bedingung 2) überlebt. Bei den ~50 vorherigen (verteilte Last) wurde die Connection zwischen Tasks meist recycelt → frische Connection → kein Fehler. In der Prüfungslast kamen Auswertungen dicht hintereinander → Connection überlebte → Bug. Theoretisch reicht **eine** Person, die zwei Auswertungen kurz nacheinander startet und beide ins selbe Kind fallen. Beleg im Log: ForkPoolWorker-1 scheiterte sofort an Lucas Job → dieses Kind hatte **vorher schon** eine (längst fertige) Auswertung bearbeitet; Luca war der Folge-Task.
 
 **Diagnose-Befehle:**
-```bash
+```
 # 1. Echten Status + Zeitstempel + Job-ID
 runuser -u postgres -- psql -d ihk_evaluator -c "SELECT id, status, error_message, updated_at FROM evaluation_jobs WHERE participant_name ILIKE '%NAME%' ORDER BY updated_at;"
 # 2. ENTSCHEIDEND: Was hat der Worker mit dem Job gemacht? (Job-ID-Kurzform aus Schritt 1)

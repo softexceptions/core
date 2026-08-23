@@ -4,6 +4,7 @@ status: aktiv
 erstellt: 2026-04-27
 deployed: true
 url: https://lernfeld.softexceptions.com
+date: 2026-05-08
 ---
 
 # Ausbilder-Landingpage

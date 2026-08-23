@@ -5,6 +5,7 @@ tags:
   - aktiv
 status: in-progress
 stand: 2026-05-24
+date: 2026-05-25
 ---
 
 # KiaChargeNav

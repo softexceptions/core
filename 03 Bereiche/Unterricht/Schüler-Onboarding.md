@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht, onboarding]
+date: 2026-05-08
 ---
 
 # Schüler-Onboarding mit Claude

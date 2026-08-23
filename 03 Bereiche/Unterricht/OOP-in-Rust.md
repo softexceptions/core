@@ -1,5 +1,6 @@
 ---
 tags: [bereich, unterricht, programmiersprachen, rust, oop]
+date: 2026-06-22
 ---
 
 # OOP in Rust — Kapselung & Traits statt Vererbung
@@ -30,7 +31,7 @@ Der Begriff vermischt vier Konzepte. Rust erfüllt drei, lehnt eines bewusst ab:
 ## Was Rust hat — mit Code
 
 **Kapselung** — Verhalten an der Datenstruktur, Felder privat:
-```rust
+```
 pub struct DiscoveryClient {
     http: reqwest::Client,   // privat — von außen unsichtbar
     base_url: String,
@@ -42,7 +43,7 @@ impl DiscoveryClient {
 ```
 
 **Abstraktion** — Traits sind die Interfaces:
-```rust
+```
 pub trait DiscoveryService {
     fn check_panel(&self, pin: &str) -> impl Future<Output = Result<Panel>>;
 }
@@ -70,7 +71,7 @@ Keine Implementierungsvererbung (`struct B extends A` gibt es nicht). Ersatz:
 | „ist-ein"-Polymorphie | **Trait-Objekt** `dyn Trait` |
 
 Default-Methoden wirken wie Mixins:
-```rust
+```
 trait Begruessung {
     fn name(&self) -> String;
     fn hallo(&self) -> String {           // Default — „geerbtes" Verhalten

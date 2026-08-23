@@ -1,5 +1,6 @@
 ---
 tags: [ressource, gesellschaft, karriere]
+date: 2026-05-08
 ---
 
 # Jobmarkt und KI

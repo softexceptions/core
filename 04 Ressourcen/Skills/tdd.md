@@ -43,8 +43,8 @@ ln -s /home/norbert/Code/ipNINX/core/.claude/skills/tdd \
 
 ## Verwandte Ressourcen
 
-- [[../python-solid/SKILL]] — Clean Architecture (TDD-Tests spiegeln die Schichten wider)
-- [[../vue-solid/SKILL]] — Vue SOLID (Frontend-Tests)
-- [[../flutter-solid/SKILL]] — Flutter SOLID (Mobile-Tests)
+- [[python-solid]] — Clean Architecture (TDD-Tests spiegeln die Schichten wider)
+- [[vue-solid]] — Vue SOLID (Frontend-Tests)
+- [[flutter-solid]] — Flutter SOLID (Mobile-Tests)
 - [[../Agent-Skills-Dev]] — Skill-Entwicklung allgemein
 - [[../Skills]] — Übersicht aller Skills

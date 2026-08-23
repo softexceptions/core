@@ -40,5 +40,5 @@ Ohne context7 → veralteter Code der nicht mehr läuft.
 ## Verwandte Ressourcen
 
 - [[MCP]] — MCP allgemein
-- [[../Skills/python-solid/SKILL]] — Python Clean Architecture
+- [[python-solid]] — Python Clean Architecture
 - [[../../02 Projekte/ipNginx]] — Projekt das context7 aktiv nutzt

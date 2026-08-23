@@ -137,7 +137,7 @@ frontend/        ← Vue 3 + TypeScript + Tailwind + ECharts
 
 ## Konfiguration (.env)
 
-```env
+```
 NGINX_LOG_PATH=/var/log/nginx/access.log
 DATABASE_URL=sqlite+aiosqlite:///./ipnginx.db
 API_PORT=8000
@@ -161,7 +161,7 @@ Erster Einsatz: SchulOrdnungHems (bestehender LXC-Container).
 
 ## Abhängigkeiten
 
-```toml
+```
 # Backend
 fastapi, uvicorn, sqlalchemy[asyncio], aiosqlite, aiofiles
 pydantic, pydantic-settings, geoip2, user-agents, httpx

@@ -325,7 +325,7 @@ Datenpfad (InfluxDB, Grafana-Dashboard „BW-WP Heizungskeller“): → [[homela
 
 Versuch, die Verluste als fünften `individual`-Eintrag in `energiebilanz-sys` aufzunehmen, **scheiterte** — Norbert sah E-Auto/SK AZ/SK WZ/BW WP, aber keine Verluste. Ursache im installierten Kartencode gefunden (`/config/www/community/energy-flow-card-plus/energy-flow-card-plus.js`, HACS v0.2.3 = neueste, kein Update verfügbar):
 
-```js
+```
 ["left-top","left-bottom","right-top","right-bottom"][i]
 ```
 
@@ -337,7 +337,7 @@ Versuch, die Verluste als fünften `individual`-Eintrag in `energiebilanz-sys` a
 
 **Gelöst (Norberts Wahl: eigene Karte):** `statistic`-Karte in derselben Sektion, eingefügt **vor** der Flusskarte neben den `energy-carbon-consumed-gauge` (der belegt nur 6 der 12 Spalten — die Lücke war schon da, kein Layout-Umbau):
 
-```yaml
+```
 type: statistic
 entity: sensor.victron_speicher_wandlungsverluste_dc_ac
 stat_type: change

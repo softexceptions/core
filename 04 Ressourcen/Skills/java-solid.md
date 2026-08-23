@@ -52,7 +52,7 @@ public ChargingService(IChargingStationRepository repo) { this.repo = repo; }
 
 ## Verwandte Ressourcen
 
-- [[../tdd/SKILL]] — TDD (Java: JUnit 5 + Mockito)
-- [[../csharp-solid/SKILL]] — C# SOLID (Vergleich: sehr ähnlich, andere Konventionen)
-- [[../python-solid/SKILL]] — Python SOLID (Vergleich: ABC/Protocol vs. interface)
+- [[tdd]] — TDD (Java: JUnit 5 + Mockito)
+- [[csharp-solid]] — C# SOLID (Vergleich: sehr ähnlich, andere Konventionen)
+- [[python-solid]] — Python SOLID (Vergleich: ABC/Protocol vs. interface)
 - [[../Skills]] — Übersicht aller Skills

@@ -171,7 +171,7 @@ Dazu ein Sicherheitsdetail: `mosquitto_pub -P <pw>` legt das Passwort in der **P
 
 ### Betriebshinweise
 
-```sh
+```
 # Dienststatus / Log
 ssh root@192.168.2.181 'svstat /service/cerbo-online-watch'
 ssh root@192.168.2.181 'tail -n 20 /var/log/cerbo-online-watch/current | tai64nlocal'
@@ -342,7 +342,7 @@ Aufgeworfen von Norbert aus der Unterrichtsperspektive: *„Meinen Schülern pre
 
 **Korrektur:** Der Kartenwert wird **nicht** im Browser berechnet. Belegt in `hui-statistic-card.ts`:
 
-```ts
+```
 const stats = await fetchStatistic(hass, this._config.entity,
   { fixed_period: { start: this._energyStart, end: this._energyEnd } });
 this._value = stats[this._config.stat_type];
@@ -526,7 +526,7 @@ Der separate Sensor `…wandlungsverluste_dc_ac` nennt für denselben Tag **3,60
 
 Norberts Entscheidung, nachdem sich zeigte, dass der Gegenwert bereits im System liegt. **Ein Subtraktionsterm statt neuer Formel:**
 
-```js
+```
 const dSelf = dPv + d.dis - d.exp - d.chg - d.loss;
 ```
 
