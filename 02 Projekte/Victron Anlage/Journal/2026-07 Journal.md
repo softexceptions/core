@@ -558,3 +558,17 @@ Der Punkt, den beide Vorlagen-Varianten übersehen — gerechnet mit Norberts ec
 
 ---
 
+
+## Nächster Schritt (Stand Anfang Juli 2026) — erledigt
+
+Die offene Verifikationsliste aus den ersten Tagen; beim Umbau am 23.08.2026 hierher verschoben, weil sie einen Zwischenstand festhält und kein gültiges To-do mehr ist.
+
+- Verifizieren (tagsüber): PV-Sensoren (Sonnenaufgang), Batterie „Geladen" (erste Ladephase), E-Auto-Balken (erste Ladung), Validierungswarnungen im Energie-Dashboard sollten alle weg sein; Sankey-Karte zeigt dann Flüsse inkl. E-Auto-Ast.
+
+
+## Erledigte Punkte aus der alten Offen-Liste (Juli 2026)
+
+Beim Umbau am 23.08.2026 aus der Offen-Liste hierher übernommen — abgehakt, aber der Nachweis bleibt erhalten.
+
+- ~~**BW WP in der EFCP-Energiebilanz zeigt 840 Wh statt 1,26 kWh**~~ ✅ ERLEDIGT 2026-07-18: Nach Norberts Update zeigt die EFCP-Karte wieder exakt die Statistik-Werte (siehe [[2026-07 Journal#EFCP-Anzeige-Bug behoben + SK-WZ-„20-Wh"-Fehlalarm (2026-07-18) ✅]]).
+- **Tages-Verifikation** (Rest): E-Auto-Balken nach erster Ladung; PFCP Netz-Richtung visuell bestätigen (Konvention stimmt laut Doku überein: Victron positiv=Bezug = PFCP-Erwartung; aktuell Einspeisung, Punkte müssen Haus→Netz laufen). ✅ Erledigt am 2026-07-06: PV-Zähler + PV-Summe liefern, Batterie „Geladen" liefert, PFCP-Batterie-Richtung in beiden Richtungen verifiziert (`invert_state: true` bleibt, hergeleitet in [[2026-07 Journal#PFCP-Batterie-Vorzeichen: Verifikation mit Doppel-Irrtum (2026-07-06) ✅]]), EFCP-Batterie-Zuordnung (consumption=entladen) per Grid-Analogie bestätigt.
