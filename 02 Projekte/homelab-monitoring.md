@@ -922,3 +922,66 @@ HA-Langzeitstatistik (`ha_get_history` source=statistics) und InfluxDB (Grafana 
 anonym lesbar) sind zwei **unabhängige** Quellen über denselben Sensor — sie gegeneinander zu stellen
 trennt sofort „Daten fehlen" von „Darstellung unterschlägt sie". Zusatzgriffe: `fn: count` je Fenster
 zeigt, ob überhaupt Punkte da sind; `|> first()` liefert den Aufzeichnungsbeginn einer Entität.
+
+---
+
+## Brauchwasser-WP: Messstelle, Datenpfad, Zigbee-Störungen
+
+Übernommen aus [[victron_node_red]] am 23.08.2026 — die Blöcke sind dort über das
+Energie-Dashboard entstanden, gehören fachlich aber zu Monitoring und Zigbee.
+Die Wärme-Auswertung (Stillstandsverlust, Zirkulation) liegt in [[Brauchwasser-Wärmepumpe]].
+
+## BW-WP → InfluxDB + Grafana (2026-07-09) ✅
+- **Ziel:** BW-WP-Monitoring analog „SK AZ und Küche" (Grafana-Dashboard mit Tages-/Wochen-/Monats-/Jahres-Energie + Jahreskosten).
+- **Architektur-Aufklärung (wichtig!):** Die HA-InfluxDB-Anbindung ist zweigeteilt — **Verbindung als UI-Config-Entry** (Settings → Integrationen, Entry `01KW2XFJ2JVCFF0178139DZRYY`: InfluxDB2 `http://192.168.2.119:8086`, org `ng`, bucket `homeassistant`, Token) und **Include-Filter in der YAML** (`influxdb:`-Block, nur `include.entities`). Die YAML sieht dadurch „unvollständig" aus — ist sie nicht. (Der `influxdb_token` in secrets.yaml ist ein unreferenziertes Relikt; Debug-Forensik-Sackgassen: `ha core logs` ist kopfrotiert, SSH-Add-on ist NICHT host_network → localhost-Tests dort wertlos.)
+- **HA:** `sensor.0xa085e3fffeb7c870_energy|_power` in die Include-Liste ergänzt (Backup `/config/configuration.yaml.claude-bak-20260709`), `ha core check` ok, Config-Entry-Reload statt Neustart — **verifiziert**: Energy-Punkt kam nach `zigbee2mqtt/.../get`-Anstoß in InfluxDB an. Power-Punkte folgen bei nächster Laständerung (WP war gerade auf 0 W gefallen).
+- **Grafana** (`192.168.2.214:3000`, v13.1): Dashboard **„BW-WP Heizungskeller"** (`/d/bwwp-heizung`, Ordner „Home") = 1:1-Klon von „SK AZ und Küche" (uid `adxk68k`), nur Entität `bc4574→b7c870`, displayName „BW-WP", inkl. Preis-Variablen (0,35/0,075 €/kWh). Anonym-Zugang ist nur Viewer → Deploy **per Provisioning** (root-SSH): Provider `/etc/grafana/provisioning/dashboards/home-dashboards.yaml` → `/var/lib/grafana/dashboards/bwwp-heizungskeller.json`, `allowUiUpdates: true` (UI-Edits möglich; bei Datei-Änderung re-importiert Grafana). Grafana-Neustart durchgeführt.
+- **Caveat:** Panels zeigen sinnvolle Balken erst, wenn Tageshistorie aufläuft (Steckdose misst erst seit kurzem, Zähler 0,08 kWh).
+
+## BrauchwasserWP-Dose schaltet sich selbst aus (2026-07-12) — Diagnose abgeschlossen, Fix offen
+
+**Symptom (Norbert):** Shelly 1PM Gen 4 „BrauchwasserWP" (S4SW-001P16EU, Zigbee via Z2M) schaltet sich von alleine aus.
+
+**Befunde (HA-Historie 7 Tage + Z2M-Probe via Node-RED-Admin-API):**
+- Spontane OFFs: 11.07. 04:07 und 11.07. 22:10 — **beide im Standby (2 W)**, nie unter Last → Überstrom-/Übertemperatur-Schutz ausgeschlossen.
+- 22:10-Off gefolgt von **Reboot 22:15** (unavailable → unknown → meldet OFF). Weitere Instabilität: 10.07. 06:24 5-min-Ausfall; 08.–09.07. >1 Tag offline mit Energie-Zähler-Reset (dokumentiert). Das Gerät crasht/rebootet also wiederholt.
+- Keine Fremdsteuerung: keine Automation/Skript/Szene referenziert das Gerät, keine Shelly-WiFi-Integration in HA, Node-RED pollt nur lesend (`/get energy`). LQI 204 = Funk gut.
+- **Mechanismus:** Zigbee-Attribut `startUpOnOff` = UNSUPPORTED (raw-read verifiziert) → Power-on-Verhalten steckt in der Shelly-RPC-Config (`initial_state`, Default **`match_input`**). SW1 ist unbeschaltet → nach jedem Firmware-Reboot initialisiert das Relais **AUS**. „Schaltet sich aus" = „ist gecrasht und neu gestartet".
+- **Verdächtiger Crash-Treiber:** WLAN auf der Dose **aktiviert** (SSID „nob"), aber dauerhaft `disconnected` → Dauer-Reconnect auf dem geteilten Funk-SoC (bekannte Gen4-Instabilitätsquelle). Firmware-Stand unbekannt (`installed_version: -1`); **Zigbee-OTA unmöglich** — Gerät hat keinen OTA-Cluster, Update geht NUR über WLAN (Web-UI/App).
+
+**Empfohlener Fix (offen):** (1) Dose ins WLAN bringen → Firmware-Update (Gen4-Zigbee-Stabilitätsfixes) + in der Web-UI `initial_state` auf `restore_last`/`on` stellen (eigentlicher Fix: Relais bleibt nach Reboot AN); (2) danach WLAN auf der Dose deaktivieren (Z2M `wifi_config.enabled=false`); (3) optional Sofort-Workaround: HA-Automation „switch off → wieder einschalten" (Dose ist reine Messdose); (4) falls weiter instabil: Gerät tauschen (SK-Dosen gleichen Modells laufen stabil).
+
+**Tripwire aktiv:** Temporärer Probe-Flow „TEMP Shelly Probe" (Live-ID `b40b73029cf7915c`, kein Repo-File) sammelt Z2M-States/Logs/Actions der Dose in Node-RED-Globals `probe_bwwp_*` — fängt beim nächsten Off-Ereignis, ob ein `action`-Event (SW1-Eingang) oder ein Reboot vorausgeht. Entfernen: `curl -X DELETE http://192.168.2.80:1880/flow/b40b73029cf7915c`.
+
+### Fix umgesetzt (2026-07-12 nachmittags) ✅
+- **Firmware-Update durch Norbert** (via WLAN): jetzt `2.0.0-beta3` (Build 20260701, App `S1PMG4ZB` = **Zigbee-Track**; das von `Shelly.CheckForUpdate` angebotene „stable 1.7.5" ist der WiFi/Matter-Track — **kein Downgrade!**). Dose hat IP `192.168.2.223` (SSID „nob"). ⚠️ Update hat den **Energie-Zähler auf 0 zurückgesetzt** (war 6,6 kWh) — HA verbucht es als sauberen total_increasing-Reset, kein Phantom.
+- **`initial_state` stand auch nach dem Update noch auf `match_input`** → per RPC (`Switch.SetConfig`) auf **`restore_last`** gesetzt + **`in_mode: detached`** (Relais vom unbeschalteten SW1 entkoppelt). Verifiziert per GetConfig; kein Neustart nötig. Damit bleibt das Relais bei künftigen Reboots AN — Symptom behoben unabhängig von der Crash-Frage.
+- **Energie-Self-Reporting funktioniert jetzt** (Beweis: Poll-Flow deaktiviert, 15-min-Fenster, Zähler sprang 12:58 UTC selbstständig 0→0,1 kWh bei ~595 W) → **Poll-Flow „Zigbee BW-WP Energie-Poll" (`c0cf881d9a69a14b`) dauerhaft DEAKTIVIERT** (nicht gelöscht — Rollback: `disabled:false` via Admin-API; Repo-File `flows/zigbee-bwwp-energie-poll.json` bleibt als Referenz).
+- Reporting-Konfiguration (inkl. seMetering) hat das Update überlebt. Interne Gerätetemperatur bei 595 W Last: 49,3 °C (unkritisch).
+- ~~**Beobachtungswoche bis ~19.07.**~~ ✅ **ABGESCHLOSSEN 2026-07-18** (siehe unten „Beobachtungswoche abgeschlossen").
+### Beobachtungswoche abgeschlossen (2026-07-18) ✅ — Fall BW-WP-Dose ZU
+- **Tripwire-Endauswertung (12.–18.07.): Dose blieb ruhig.** Keine Reboots, keine spontanen OFFs, kein Solo-unavailable. Alle Fehler-Logs fremdverursacht: 15.07. = Elektroarbeiten/Coordinator (eigene Sektion), 16.07. ~12:24 kurzer Z2M-Reconnect (`ECONNRESET`, Bridge-seitig, alle Geräte), dazu der bekannte harmlose get-power-Timeout 15.07. Energie-Self-Reporting lief die ganze Woche (Zähler am 18.07. bei ~20 kWh).
+- **WLAN deaktiviert (2026-07-18 ~15:58):** per Z2M-Set `{"wifi_config":{"enabled":false}}` auf `zigbee2mqtt/BrauchwasserWP/set` (temporärer Admin-API-Flow, danach gelöscht). Verifiziert dreifach: Dose bestätigt `enabled: false` im State, IP 192.168.2.223 nicht mehr pingbar, Zigbee meldet danach frisch weiter (kein Reboot, Relais AN bei ~660 W Last, Zähler lief durch). ⚠️ RPC/Web-UI ab jetzt nicht mehr erreichbar — für künftige Config-Änderungen WLAN erst wieder per Z2M-Set aktivieren (`enabled:true` + ssid/Passwort). Hinweis: `wifi_status` im Z2M-State zeigt noch stale „got ip" (Attribut wird nur bei RPC-Poll aktualisiert) — nicht verwirren lassen.
+- **Tripwire-Flow `b40b73029cf7915c` gelöscht** (DELETE verifiziert 404) + alle Probe-/Debug-Globals aufgeräumt (`probe_bwwp_*`, `z2m_*`, `poll_debug`, `probe_disc`; `probe_wzlampe*` bewusst belassen — gehört zur T1M-Lampe).
+- Damit ist der Fall „BrauchwasserWP schaltet sich selbst aus" vollständig geschlossen: Ursache (Firmware-Crash + `match_input`) behoben, Woche stabil, Aufräumen erledigt.
+
+- **Zwischenstand Beobachtungswoche (2026-07-15, Tag 3): Dose blieb ruhig ✅** — HA-Historie 12.–15.07.: keine spontanen OFFs, keine Solo-unavailable, kein Reboot; Tripwire-Logs seit dem Fix ohne Geräte-Auffälligkeit (nur ein einzelner get-power-Timeout 15.07. 05:56 — harmlos). Die unavailable-Fenster am 15.07. vormittags waren der **Z2M-Coordinator-Ausfall** (eigene Sektion 2026-07-15), betrafen alle Zigbee-Geräte und zählen nicht gegen die Dose. Plan unverändert: nach ~19.07. WLAN aus + Tripwire löschen.
+
+
+## Zigbee-Vormittags-Ausfall 15.07. — Coordinator-Socket-Timeouts, NICHT die Dosen (2026-07-15, Diagnose korrigiert)
+
+**Symptom (Norbert):** Keine Energiewerte von der Klimaanlage EG Arbeitszimmer (SK AZ, `sensor.0xa085e3fffebc4574_energy`).
+
+**Erste (falsche) Diagnose:** Gen4-Firmware-Crash der SK-AZ-Dose (Muster wie BW-WP am 12.07.) → Firmware-Update empfohlen. **Widerlegt** beim Gegencheck für die BW-WP-Beobachtungswoche: **Alle drei Shelly-Dosen (SK AZ, SK WZ, BW-WP) gingen sekundengleich offline** (08:14:56, 11:30:56, 11:43:01, 11:57:32, 13:18:02) — zeitgleiche Ausfälle über mehrere Geräte = Infrastruktur, nie Geräte-Crash.
+
+**Tatsächliche Ursache (dreifach verifiziert):**
+- `binary_sensor.zigbee2mqtt_bridge_connection_state`: **Z2M-Bridge offline 08:15–11:30, 11:43–11:44, 11:57–13:18** — deckungsgleich mit allen Geräte-unavailable-Fenstern.
+- Z2M-Log (via Tripwire-Probe `probe_bwwp_logs`): **`zh:zstack:znp: Socket error Error: read ETIMEDOUT`** um 06:14:56/09:43:01/09:57:32 UTC (= 08:14:56/11:43:01/11:57:32 lokal) → die Verbindung **Z2M → Zigbee-Coordinator** (zstack/ZNP, Socket = vermutlich netzwerk-angebundener Coordinator) brach ab.
+- Victron-MQTT-Sensoren (gleicher Broker, via Node-RED) liefen lückenlos durch → Broker + HA gesund, **nur Z2M↔Coordinator** betroffen.
+
+**Auswirkung auf SK AZ (erklärt das Symptom vollständig):** Energie-Zähler meldet nur bei 0,1-kWh-Schritten; alle Reports während der Z2M-Ausfälle gingen verloren (kein Queueing). Zähler „fror" bei 246,72 kWh ein (letzter Report 14.07. 22:29), sprang nach Bridge-Rückkehr 13:35 auf 248,09 (+1,37 — die Dose zählt intern korrekt weiter). 13:57 kam der reguläre Selbst-Report pünktlich (248,19 bei 277 W ≈ alle 22 min) → **Self-Reporting intakt, Dose fehlerfrei**. Tagesverbrauch klumpt statistisch in der 13:35-Zelle (belassen, kein Verlust), kein Zähler-Reset, keine Reparatur nötig.
+
+**Lehre (Diagnose-Regel):** Bei Zigbee-„Gerät spinnt"-Symptomen ZUERST prüfen, ob andere Zigbee-Geräte zeitgleich unavailable waren (`bridge_connection_state`-Historie) — erst wenn das Gerät ALLEIN ausfällt, geräteseitig suchen (wie BW-WP 08.–12.07., dort war es real die Firmware).
+
+**AUFGELÖST (gleicher Tag, Norbert):** Am 15.07. vormittags liefen **Elektroarbeiten im Haus** — der Stromkreis des Coordinators (bzw. seines Netzwerkpfads) war stromlos. NICHT das öffentliche Netz: Gridmeter zeigte durchgehend Einspeisung (bis −18,4 kW Spitze), Proxmox/HA/PV liefen ununterbrochen — nur einzelne Hauskreise waren freigeschaltet. Die Ausfallfenster (08:15–11:30, 11:43, 11:57–13:18) = Arbeitsphasen. Kein Infrastruktur-Problem, keine weitere Beobachtung nötig.
+

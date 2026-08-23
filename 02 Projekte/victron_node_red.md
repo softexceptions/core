@@ -1,6 +1,23 @@
+---
+tags: [projekt/aktiv, victron, node-red, energie, homeassistant, mqtt, pv]
+status: aktiv
+date: 2026-07-05
+updated: 2026-08-23
+---
+
 # Victron Node-RED
 
 Node-RED-Flows für die Victron-Anlage, Repo: `~/Code/victron_node_red`.
+
+> [!info] Umbau läuft (Etappe 1 von 4, Stand 23.08.2026)
+> Diese Notiz wird in einen Ordner mit Themennotizen und einem Journal aufgeteilt.
+> **Erledigt:** Frontmatter ergänzt, projektfremde Themen ausgelagert.
+> **Offen:** Journal abtrennen, Themennotizen destillieren, MOC anlegen.
+
+**Ausgelagert am 23.08.2026:**
+- [[Brauchwasser-Wärmepumpe]] — Stillstandsverlust, Stufentest, Zirkulation, Pumpenrichtung
+- [[homelab-monitoring]] — BW-WP-Datenpfad (InfluxDB/Grafana), Zigbee-Dosen- und Coordinator-Störungen
+- [[homelab-infrastruktur]] — UniFi-Firmware-Vorfall 18.08., UDM-SSH-Runbook, HA von außen (NPM/Alexa)
 
 ## Setup
 - Node-RED läuft in einem **Proxmox-LXC-Container** (nicht auf dem Cerbo GX, um ihn zu entlasten).
@@ -259,12 +276,10 @@ Gridmeter **VM-3P75CT** in Home Assistant einbinden, insbesondere fürs Energie-
 - **Dashboard-Sektion „Batrium (BMS)“ in `victron-sys` (2026-07-07) ✅:** Tiles für Status, Schütz-Alarm und Test-Button (tap = button.press, „Pushover-Test senden“, 12 Spalten; Status/Alarm je 6). Neuer config_hash 98ca39c21a7eb32d.
 - ~~OFFEN (1)~~ ERLEDIGT: Pushover-Credentials von Norbert eingetragen (App-Token + User-Key, je 30 Zeichen, stehen NUR im Live-Flow — die Repo-Kopie behält bewusst die Platzhalter, bei künftigen Repo-Syncs Credentials ausnehmen!). Testmeldung Prio 0 durch die echte Kette gesendet: HTTP 200, status 1, Empfang auf dem Handy von Norbert bestätigt ✓ (2026-07-06 spätabends). (2) ~~Kurioses Flag `hasCriticalSupplyVoltLo`~~ GEKLÄRT (Msg_4f33 ControlCriticalSetup passiv mitgelesen): Kriterium ist DEAKTIVIERT (MonitorSupplyLo=Off), Schwelle steht auf 40 V (Default für pack-gespeisten WatchMon) vs. 13,2-V-Versorgung → Roh-Vergleich dauerhaft true, aber wirkungslos. Flag wird im 4733-Decoder jetzt gefiltert. Aktive Critical-Kriterien: Zellspannung 2,80/3,60 V, Zelltemp −10/55 °C, Pack 44,8/57,0 V; Mode=Auto, AutoRecovery=An (→ Entwarnungs-Meldung wird real feuern). (3) Watchdog („WatchMon stumm") bewusst abgewählt. (4) Rest des WatchMon-Tabs (Zell-Globals/Chart) weiterhin tot — Kandidat für „Stufe B"-Modernisierung.
 
-## BW-WP → InfluxDB + Grafana (2026-07-09) ✅
-- **Ziel:** BW-WP-Monitoring analog „SK AZ und Küche" (Grafana-Dashboard mit Tages-/Wochen-/Monats-/Jahres-Energie + Jahreskosten).
-- **Architektur-Aufklärung (wichtig!):** Die HA-InfluxDB-Anbindung ist zweigeteilt — **Verbindung als UI-Config-Entry** (Settings → Integrationen, Entry `01KW2XFJ2JVCFF0178139DZRYY`: InfluxDB2 `http://192.168.2.119:8086`, org `ng`, bucket `homeassistant`, Token) und **Include-Filter in der YAML** (`influxdb:`-Block, nur `include.entities`). Die YAML sieht dadurch „unvollständig" aus — ist sie nicht. (Der `influxdb_token` in secrets.yaml ist ein unreferenziertes Relikt; Debug-Forensik-Sackgassen: `ha core logs` ist kopfrotiert, SSH-Add-on ist NICHT host_network → localhost-Tests dort wertlos.)
-- **HA:** `sensor.0xa085e3fffeb7c870_energy|_power` in die Include-Liste ergänzt (Backup `/config/configuration.yaml.claude-bak-20260709`), `ha core check` ok, Config-Entry-Reload statt Neustart — **verifiziert**: Energy-Punkt kam nach `zigbee2mqtt/.../get`-Anstoß in InfluxDB an. Power-Punkte folgen bei nächster Laständerung (WP war gerade auf 0 W gefallen).
-- **Grafana** (`192.168.2.214:3000`, v13.1): Dashboard **„BW-WP Heizungskeller"** (`/d/bwwp-heizung`, Ordner „Home") = 1:1-Klon von „SK AZ und Küche" (uid `adxk68k`), nur Entität `bc4574→b7c870`, displayName „BW-WP", inkl. Preis-Variablen (0,35/0,075 €/kWh). Anonym-Zugang ist nur Viewer → Deploy **per Provisioning** (root-SSH): Provider `/etc/grafana/provisioning/dashboards/home-dashboards.yaml` → `/var/lib/grafana/dashboards/bwwp-heizungskeller.json`, `allowUiUpdates: true` (UI-Edits möglich; bei Datei-Änderung re-importiert Grafana). Grafana-Neustart durchgeführt.
-- **Caveat:** Panels zeigen sinnvolle Balken erst, wenn Tageshistorie aufläuft (Steckdose misst erst seit kurzem, Zähler 0,08 kWh).
+## BW-WP in den Energie-Dashboards ergänzt (2026-07-09) ✅
+
+Datenpfad (InfluxDB, Grafana-Dashboard „BW-WP Heizungskeller“): → [[homelab-monitoring#Brauchwasser-WP: Messstelle, Datenpfad, Zigbee-Störungen]] (23.08.2026).
+
 - **PFCP „Leistungsfluss live"** (`energie-sys`): BW-WP als vierter individual-Kreis ergänzt — Name **„BW WP"**, `sensor.0xa085e3fffeb7c870_power`, mdi:heat-pump, display_zero (wie E-Auto/SK AZ/SK WZ).
 - **EFCP „Energiebilanz"** (`energiebilanz-sys`): BW-WP ebenso als vierter individual-Eintrag — „BW WP", `sensor.0xa085e3fffeb7c870_energy` (kWh-Zähler, EFCP rechnet Zeitraum-Summen über die Energie-Collection), mdi:heat-pump, display_zero.
 
@@ -292,51 +307,13 @@ Gridmeter **VM-3P75CT** in Home Assistant einbinden, insbesondere fürs Energie-
 
 **Nebenbefund PFCP (andere Karte, `energie-sys` „Leistungsfluss live"):** Erste Fehlspur der Diagnose, aber echtes Verhalten — PFCP v0.3.7 rendert bei **Kartenbreite < 359 px nur die ersten 2** individual-Kreise (Bundle-Logik: `allow_layout_break || width >= 359 ? 4 : 2`, dann `filter(has).slice(0,T)`; ResizeObserver misst live). Auf Desktop alle 4 sichtbar, auf schmalen Screens fliegen SK WZ + BW WP raus (Reihenfolge = Config-Reihenfolge, kein Sortieren ohne `sort_individual_devices`). Fix bei Bedarf: `allow_layout_break: true` an der Karte — **noch nicht gesetzt** (Norberts eigentliches Anliegen war die EFCP-Karte).
 
-## BrauchwasserWP-Dose schaltet sich selbst aus (2026-07-12) — Diagnose abgeschlossen, Fix offen
+## BrauchwasserWP-Dose schaltet sich selbst aus (2026-07-12) — Fall geschlossen
 
-**Symptom (Norbert):** Shelly 1PM Gen 4 „BrauchwasserWP" (S4SW-001P16EU, Zigbee via Z2M) schaltet sich von alleine aus.
+→ Verschoben nach [[homelab-monitoring#Brauchwasser-WP: Messstelle, Datenpfad, Zigbee-Störungen]] (23.08.2026).
 
-**Befunde (HA-Historie 7 Tage + Z2M-Probe via Node-RED-Admin-API):**
-- Spontane OFFs: 11.07. 04:07 und 11.07. 22:10 — **beide im Standby (2 W)**, nie unter Last → Überstrom-/Übertemperatur-Schutz ausgeschlossen.
-- 22:10-Off gefolgt von **Reboot 22:15** (unavailable → unknown → meldet OFF). Weitere Instabilität: 10.07. 06:24 5-min-Ausfall; 08.–09.07. >1 Tag offline mit Energie-Zähler-Reset (dokumentiert). Das Gerät crasht/rebootet also wiederholt.
-- Keine Fremdsteuerung: keine Automation/Skript/Szene referenziert das Gerät, keine Shelly-WiFi-Integration in HA, Node-RED pollt nur lesend (`/get energy`). LQI 204 = Funk gut.
-- **Mechanismus:** Zigbee-Attribut `startUpOnOff` = UNSUPPORTED (raw-read verifiziert) → Power-on-Verhalten steckt in der Shelly-RPC-Config (`initial_state`, Default **`match_input`**). SW1 ist unbeschaltet → nach jedem Firmware-Reboot initialisiert das Relais **AUS**. „Schaltet sich aus" = „ist gecrasht und neu gestartet".
-- **Verdächtiger Crash-Treiber:** WLAN auf der Dose **aktiviert** (SSID „nob"), aber dauerhaft `disconnected` → Dauer-Reconnect auf dem geteilten Funk-SoC (bekannte Gen4-Instabilitätsquelle). Firmware-Stand unbekannt (`installed_version: -1`); **Zigbee-OTA unmöglich** — Gerät hat keinen OTA-Cluster, Update geht NUR über WLAN (Web-UI/App).
+## Zigbee-Vormittags-Ausfall 15.07. — Coordinator-Socket-Timeouts (2026-07-15)
 
-**Empfohlener Fix (offen):** (1) Dose ins WLAN bringen → Firmware-Update (Gen4-Zigbee-Stabilitätsfixes) + in der Web-UI `initial_state` auf `restore_last`/`on` stellen (eigentlicher Fix: Relais bleibt nach Reboot AN); (2) danach WLAN auf der Dose deaktivieren (Z2M `wifi_config.enabled=false`); (3) optional Sofort-Workaround: HA-Automation „switch off → wieder einschalten" (Dose ist reine Messdose); (4) falls weiter instabil: Gerät tauschen (SK-Dosen gleichen Modells laufen stabil).
-
-**Tripwire aktiv:** Temporärer Probe-Flow „TEMP Shelly Probe" (Live-ID `b40b73029cf7915c`, kein Repo-File) sammelt Z2M-States/Logs/Actions der Dose in Node-RED-Globals `probe_bwwp_*` — fängt beim nächsten Off-Ereignis, ob ein `action`-Event (SW1-Eingang) oder ein Reboot vorausgeht. Entfernen: `curl -X DELETE http://192.168.2.80:1880/flow/b40b73029cf7915c`.
-
-### Fix umgesetzt (2026-07-12 nachmittags) ✅
-- **Firmware-Update durch Norbert** (via WLAN): jetzt `2.0.0-beta3` (Build 20260701, App `S1PMG4ZB` = **Zigbee-Track**; das von `Shelly.CheckForUpdate` angebotene „stable 1.7.5" ist der WiFi/Matter-Track — **kein Downgrade!**). Dose hat IP `192.168.2.223` (SSID „nob"). ⚠️ Update hat den **Energie-Zähler auf 0 zurückgesetzt** (war 6,6 kWh) — HA verbucht es als sauberen total_increasing-Reset, kein Phantom.
-- **`initial_state` stand auch nach dem Update noch auf `match_input`** → per RPC (`Switch.SetConfig`) auf **`restore_last`** gesetzt + **`in_mode: detached`** (Relais vom unbeschalteten SW1 entkoppelt). Verifiziert per GetConfig; kein Neustart nötig. Damit bleibt das Relais bei künftigen Reboots AN — Symptom behoben unabhängig von der Crash-Frage.
-- **Energie-Self-Reporting funktioniert jetzt** (Beweis: Poll-Flow deaktiviert, 15-min-Fenster, Zähler sprang 12:58 UTC selbstständig 0→0,1 kWh bei ~595 W) → **Poll-Flow „Zigbee BW-WP Energie-Poll" (`c0cf881d9a69a14b`) dauerhaft DEAKTIVIERT** (nicht gelöscht — Rollback: `disabled:false` via Admin-API; Repo-File `flows/zigbee-bwwp-energie-poll.json` bleibt als Referenz).
-- Reporting-Konfiguration (inkl. seMetering) hat das Update überlebt. Interne Gerätetemperatur bei 595 W Last: 49,3 °C (unkritisch).
-- ~~**Beobachtungswoche bis ~19.07.**~~ ✅ **ABGESCHLOSSEN 2026-07-18** (siehe unten „Beobachtungswoche abgeschlossen").
-### Beobachtungswoche abgeschlossen (2026-07-18) ✅ — Fall BW-WP-Dose ZU
-- **Tripwire-Endauswertung (12.–18.07.): Dose blieb ruhig.** Keine Reboots, keine spontanen OFFs, kein Solo-unavailable. Alle Fehler-Logs fremdverursacht: 15.07. = Elektroarbeiten/Coordinator (eigene Sektion), 16.07. ~12:24 kurzer Z2M-Reconnect (`ECONNRESET`, Bridge-seitig, alle Geräte), dazu der bekannte harmlose get-power-Timeout 15.07. Energie-Self-Reporting lief die ganze Woche (Zähler am 18.07. bei ~20 kWh).
-- **WLAN deaktiviert (2026-07-18 ~15:58):** per Z2M-Set `{"wifi_config":{"enabled":false}}` auf `zigbee2mqtt/BrauchwasserWP/set` (temporärer Admin-API-Flow, danach gelöscht). Verifiziert dreifach: Dose bestätigt `enabled: false` im State, IP 192.168.2.223 nicht mehr pingbar, Zigbee meldet danach frisch weiter (kein Reboot, Relais AN bei ~660 W Last, Zähler lief durch). ⚠️ RPC/Web-UI ab jetzt nicht mehr erreichbar — für künftige Config-Änderungen WLAN erst wieder per Z2M-Set aktivieren (`enabled:true` + ssid/Passwort). Hinweis: `wifi_status` im Z2M-State zeigt noch stale „got ip" (Attribut wird nur bei RPC-Poll aktualisiert) — nicht verwirren lassen.
-- **Tripwire-Flow `b40b73029cf7915c` gelöscht** (DELETE verifiziert 404) + alle Probe-/Debug-Globals aufgeräumt (`probe_bwwp_*`, `z2m_*`, `poll_debug`, `probe_disc`; `probe_wzlampe*` bewusst belassen — gehört zur T1M-Lampe).
-- Damit ist der Fall „BrauchwasserWP schaltet sich selbst aus" vollständig geschlossen: Ursache (Firmware-Crash + `match_input`) behoben, Woche stabil, Aufräumen erledigt.
-
-- **Zwischenstand Beobachtungswoche (2026-07-15, Tag 3): Dose blieb ruhig ✅** — HA-Historie 12.–15.07.: keine spontanen OFFs, keine Solo-unavailable, kein Reboot; Tripwire-Logs seit dem Fix ohne Geräte-Auffälligkeit (nur ein einzelner get-power-Timeout 15.07. 05:56 — harmlos). Die unavailable-Fenster am 15.07. vormittags waren der **Z2M-Coordinator-Ausfall** (eigene Sektion 2026-07-15), betrafen alle Zigbee-Geräte und zählen nicht gegen die Dose. Plan unverändert: nach ~19.07. WLAN aus + Tripwire löschen.
-
-## Zigbee-Vormittags-Ausfall 15.07. — Coordinator-Socket-Timeouts, NICHT die Dosen (2026-07-15, Diagnose korrigiert)
-
-**Symptom (Norbert):** Keine Energiewerte von der Klimaanlage EG Arbeitszimmer (SK AZ, `sensor.0xa085e3fffebc4574_energy`).
-
-**Erste (falsche) Diagnose:** Gen4-Firmware-Crash der SK-AZ-Dose (Muster wie BW-WP am 12.07.) → Firmware-Update empfohlen. **Widerlegt** beim Gegencheck für die BW-WP-Beobachtungswoche: **Alle drei Shelly-Dosen (SK AZ, SK WZ, BW-WP) gingen sekundengleich offline** (08:14:56, 11:30:56, 11:43:01, 11:57:32, 13:18:02) — zeitgleiche Ausfälle über mehrere Geräte = Infrastruktur, nie Geräte-Crash.
-
-**Tatsächliche Ursache (dreifach verifiziert):**
-- `binary_sensor.zigbee2mqtt_bridge_connection_state`: **Z2M-Bridge offline 08:15–11:30, 11:43–11:44, 11:57–13:18** — deckungsgleich mit allen Geräte-unavailable-Fenstern.
-- Z2M-Log (via Tripwire-Probe `probe_bwwp_logs`): **`zh:zstack:znp: Socket error Error: read ETIMEDOUT`** um 06:14:56/09:43:01/09:57:32 UTC (= 08:14:56/11:43:01/11:57:32 lokal) → die Verbindung **Z2M → Zigbee-Coordinator** (zstack/ZNP, Socket = vermutlich netzwerk-angebundener Coordinator) brach ab.
-- Victron-MQTT-Sensoren (gleicher Broker, via Node-RED) liefen lückenlos durch → Broker + HA gesund, **nur Z2M↔Coordinator** betroffen.
-
-**Auswirkung auf SK AZ (erklärt das Symptom vollständig):** Energie-Zähler meldet nur bei 0,1-kWh-Schritten; alle Reports während der Z2M-Ausfälle gingen verloren (kein Queueing). Zähler „fror" bei 246,72 kWh ein (letzter Report 14.07. 22:29), sprang nach Bridge-Rückkehr 13:35 auf 248,09 (+1,37 — die Dose zählt intern korrekt weiter). 13:57 kam der reguläre Selbst-Report pünktlich (248,19 bei 277 W ≈ alle 22 min) → **Self-Reporting intakt, Dose fehlerfrei**. Tagesverbrauch klumpt statistisch in der 13:35-Zelle (belassen, kein Verlust), kein Zähler-Reset, keine Reparatur nötig.
-
-**Lehre (Diagnose-Regel):** Bei Zigbee-„Gerät spinnt"-Symptomen ZUERST prüfen, ob andere Zigbee-Geräte zeitgleich unavailable waren (`bridge_connection_state`-Historie) — erst wenn das Gerät ALLEIN ausfällt, geräteseitig suchen (wie BW-WP 08.–12.07., dort war es real die Firmware).
-
-**AUFGELÖST (gleicher Tag, Norbert):** Am 15.07. vormittags liefen **Elektroarbeiten im Haus** — der Stromkreis des Coordinators (bzw. seines Netzwerkpfads) war stromlos. NICHT das öffentliche Netz: Gridmeter zeigte durchgehend Einspeisung (bis −18,4 kW Spitze), Proxmox/HA/PV liefen ununterbrochen — nur einzelne Hauskreise waren freigeschaltet. Die Ausfallfenster (08:15–11:30, 11:43, 11:57–13:18) = Arbeitsphasen. Kein Infrastruktur-Problem, keine weitere Beobachtung nötig.
+→ Verschoben nach [[homelab-monitoring#Brauchwasser-WP: Messstelle, Datenpfad, Zigbee-Störungen]] (23.08.2026).
 
 ## EFCP-Anzeige-Bug behoben + SK-WZ-„20-Wh"-Fehlalarm (2026-07-18) ✅
 
@@ -677,7 +654,7 @@ Echte WW-Nutzung         1,68 kWh/Tag el. = 5,0 kWh th. = ~108 l bei 40 K
 
 Der **54/46-Split ist COP-unabhängig** (Verhältnis zweier Taktraten); nur die absoluten kWh-thermisch- und Liter-Zahlen hängen an der COP-3-Annahme. Guter 300-l-Speicher verliert 60–100 W → Norbert liegt **Faktor ~2,9 darüber**. 108 l/Tag für 4 Personen ist eher **wenig** (typisch 120–200 l) — die Personenzahl entlastet die Zahl also nicht, sie belastet sie.
 
-**Ursache (von Norbert bestätigte Randbedingungen):** ungedämmte Rohre vorhanden, Zirkulationspumpe **neu** und **bedarfsgesteuert**. Damit ist die Pumpe als Verursacher raus — die 242 W wurden nachts gemessen, während sie steht. Bleibt **Schwerkraftzirkulation** durch die stillstehende Zirkulationsleitung und/oder Einrohrzirkulation im blanken Vorlauf.
+**Ursache (von Norbert bestätigte Randbedingungen):** ungedämmte Rohre vorhanden, Zirkulationspumpe **neu** und **bedarfsgesteuert**. (Die Ursache wurde später widerlegt — verkehrte Pumpenrichtung, siehe [[Brauchwasser-Wärmepumpe]].) Damit ist die Pumpe als Verursacher raus — die 242 W wurden nachts gemessen, während sie steht. Bleibt **Schwerkraftzirkulation** durch die stillstehende Zirkulationsleitung und/oder Einrohrzirkulation im blanken Vorlauf.
 
 Rechnerische Gegenprobe bei 55 °C Wasser / 18 °C Keller (ΔT 37 K): blankes DN15 27,8 W/m, DN20 33,3 W/m, DN25 40,7 W/m → **6–9 m warmes blankes Rohr erklären die 242 W vollständig**. Gilt aber nur bei *aktiver Strömung* — stehendes Wasser im Rohr kühlt einmal ab und isoliert dann. Dass die 242 W dauerhaft anliegen, beweist Bewegung im Rohr trotz stehender Pumpe.
 
@@ -709,70 +686,9 @@ Takterkennung über die Leistungskurve zog daraus einen 255-min-Lauf. Gegenprobe
 - **Sicherungskreis-Test** zur Eingrenzung der 120–207 W unerklärter Grundlast (Batterieleistung nachts als Anzeige reicht, kein neuer Sensor nötig).
 - **Angeboten, noch nicht gebaut:** AC-Lasten-Flow (`/Ac/Consumption/L1..L3/Power` → MQTT → HA), damit die GX-Größe in der Historie liegt statt nur per D-Bus abfragbar. Der ursprünglich mit angebotene „Grundlast-Sensor" wurde **verworfen** — sobald der AC-Lasten-Sensor existiert, ist das nächtliche Minimum ein `statistics`-Helper (`characteristic: value_min`, `max_age: 24h`) direkt in HA, kein Flow nötig. Datenbeschaffung aus dem D-Bus gehört nach Node-RED, statistische Ableitung aus vorhandenen Sensoren nach HA.
 
-## Versuchsaufbau: BW-WP-Stillstandsverlust eingrenzen — Stufentest Pumpe → Hahn (2026-07-26) ✅ ABGESCHLOSSEN (Auswertung 13.08.2026)
+## Versuchsaufbau: BW-WP-Stillstandsverlust — Stufentest Pumpe → Hahn (2026-07-26)
 
-**Ziel:** Die 242 W Dauerverlust der Brauchwasser-Wärmepumpe (siehe Abschnitt oben) auf ihre Ursache zurückführen. Kandidaten: (a) Zirkulationspumpe läuft mehr als angenommen, (b) Schwerkraftzirkulation durch die stillstehende Zirkulationsleitung, (c) Einrohrzirkulation im blanken Warmwasser-Vorlauf bzw. Speicherdämmung.
-
-**Design — von Norbert vorgegeben, besser als mein ursprünglicher Vorschlag.** Ich hatte „Hahn zu + Pumpe stromlos" in einem Schritt vorgeschlagen; das hätte einen Gesamteffekt gemessen, ohne die Anteile zu trennen. Norberts Staffelung isoliert schrittweise:
-
-```
-  Basis  -> Phase A   =  echter Pumpenanteil
-  A      -> Phase B   =  Schwerkraftzirkulation durch den Kreis
-  Rest bei B          =  Einrohrzirkulation Vorlauf + Speicherdämmung
-```
-
-Drei Größen aus zwei Eingriffen. Der erwartete Nullbefund in Phase A ist kein verschwendeter Aufwand, sondern der **Test der Annahme** „bedarfsgesteuerte Pumpe läuft vernachlässigbar" — die war bisher nur Norberts Aussage, nicht gemessen.
-
-### Basislinie (16 Tage, 09.–25.07.2026)
-`sensor.0xa085e3fffeb7c870_energy`, Tages-`change`: **Mittel 3,19 kWh/Tag, σ = 0,35 kWh**, Spanne 2,61–3,70 (Ausreißer 5,61 am 23.07. ausgeschlossen).
-
-Bei 3 Messtagen je Phase: Standardfehler = 0,35/√3 = **0,202 kWh/Tag** → **nachweisbar ab 0,40 kWh/Tag** Unterschied (= 21 % des Stillstandsverlusts von 1,93 kWh/Tag el.).
-
-### Vorhersagen — VOR der Messung festgelegt (Falsifizierbarkeit)
-
-**Phase A — nur Pumpe stromlos, Absperrhahn offen**
-- Modell sagt: **3,1–3,2 kWh/Tag, praktisch unverändert.**
-- Begründung: Die 242 W wurden im Nachtfenster 23:57–05:57 gemessen, in dem die bedarfsgesteuerte Pumpe ohnehin steht. Eine stromlose Pumpe ist zudem **kein geschlossenes Ventil** — das Gehäuse bleibt hydraulisch offen, Schwerkraftzirkulation läuft weiter.
-- **Fällt der Wert unter 2,79 kWh/Tag → Modell widerlegt**, die Pumpe läuft deutlich mehr als „bedarfsgesteuert" nahelegt.
-
-**Phase B — zusätzlich Absperrhahn in der Zirkulationsleitung zu**
-```
-  Kreis ist die ganze Ursache  ->  1,26 kWh/Tag
-  Kreis ist die halbe Ursache  ->  2,23 kWh/Tag
-  Kreis irrelevant             ->  3,19 kWh/Tag
-```
-- Bleibt es bei ~3,2 kWh/Tag: weder Pumpe noch Kreis. Dann Einrohrzirkulation im blanken Vorlauf oder Speicherdämmung — **kein Ventil hilft**, nur Dämmung + Schwanenhals (nach unten gezogene Rohrschleife) direkt am Speicherausgang.
-- Ein Tageswert **unter 2,5 kWh** läge außerhalb von allem in 16 Tagen Gemessenen → eindeutiges Signal.
-
-### Störgröße (verfälscht BEIDE Phasen nach oben)
-Ohne Zirkulation dauert warmes Wasser an entfernten Zapfstellen länger → längeres Laufenlassen → mehr Warmwasserbedarf. Größenordnung: 30 s × 5 Zapfungen × 6 l/min = 15 l/Tag bei 40 K ≈ **0,23 kWh/Tag elektrisch = 1,2 Standardfehler**. Maskiert kleine echte Effekte.
-
-**Gegenmaßnahmen:** (1) Familie bitten, das Zapfverhalten nicht zu ändern. (2) Zusätzlich das **Nachtfenster 23:57–05:57** auswerten — dort zapft niemand, die Störgröße greift nicht. Referenzwerte aus der Basislinie: 0,081 kWh/h (Nacht auf 26.07.) und 0,087 kWh/h (Nacht auf 23.07.).
-
-### Messprotokoll
-- **Primärgröße:** Tages-`change` von `sensor.0xa085e3fffeb7c870_energy` (Energiezähler = robust gegen Zigbee-Meldelücken).
-- **NICHT** den Gauge „Momentanleistung" auf `kg-heizungskeller` verwenden — der hängt an der lückenhaften Leistungsmeldung und kann stundenlang veraltet sein (siehe Stolperfalle im Abschnitt oben).
-- **Sekundärgröße:** Nachtfenster-Rate, nur verwertbar wenn die Zigbee-Erfassung an dem Tag lückenlos war — Validierung durch Rekonstruktion `Σ(Laufzeit × mittlere Leistung)` gegen den Tages-kWh-Wert (Abweichung < ~2 % → belastbar).
-- 3 auswertbare Tage je Phase, normale Anwesenheit. Keine Gäste, keine Abwesenheit, keine Wäsche-Sonderaktionen.
-- **Umschaltzeitpunkte notieren.** HA bucketet Tagesstatistik Mitternacht–Mitternacht lokal → spätabends umschalten, dann sind die Buckets sauber getrennt.
-- Pumpe fest verdrahtet? Deaktivierung über Schalter/Sicherung genügt, keine Klemmarbeit an der festen Installation nötig.
-- Phase B: Hahn zu **und** Pumpe weiter stromlos — der Hahn macht die thermische Arbeit, die Stromlosigkeit schützt die Pumpe vor Anlauf gegen geschlossenes Ventil.
-- Legionellen: für 3+3 Tage irrelevant (Speicher bleibt heiß). Erst bei dauerhafter Stilllegung ein Thema → dann Leitung richtig abtrennen/entleeren oder mit Schwerkraftbremse betreiben, Sache des Installateurs.
-
-### Status
-
-**Phase A gestartet: 2026-07-26, 01:41 CEST** (Pumpe stromlos, Absperrhahn offen).
-
-- Auswertbare Tage: **26. / 27. / 28.07.** Der 26.07. ist ab 01:41 Phase A — die ersten 1h41 fallen nicht ins Gewicht, weil eine bedarfsgesteuerte Pumpe zu dieser Uhrzeit ohnehin nicht läuft. 27. und 28.07. sind vollständig sauber.
-- **Umschalten auf Phase B: spätabends am 28.07.** (nach 23:00, vor Mitternacht) → Phase B = 29. / 30. / 31.07.
-- AC-Lasten-Snapshot zum Umschaltzeitpunkt (Referenz, ersetzt keine Messung): Netz L1 92 / L2 −3 / L3 −102 = −13 W; AC-Lasten L1 205 / L2 143 / L3 0 = **348 W**. Liegt im normalen Nachtband (Minimum 342, 25-%-Quantil 387, Median 506 W) — kein Sofort-Effekt erkennbar, war so vorhergesagt.
-
-- [x] Phase A gestartet am: **26.07.2026 01:41**  Tageswerte: **1,40** (Teiltag) / **0,80** / **0,75** kWh
-- [x] Phase B gestartet am: **28.07.2026 spätabends**  Tageswerte: **0,60** / **0,91** / **0,54** kWh
-- [x] Auswertung gegen Basislinie → **Ergebnis siehe „BW-WP-Stufentest: Auswertung" am Dateiende (13.08.2026)**
-
-### Randnotiz (offen, betrifft den Versuch NICHT)
-Beim Snapshot stand `Consumption/L3/Power` auf exakt **0 W**, während Netz L3 bei −102 W lag. Verdacht: Der GX klemmt die Phasen-Consumption bei 0 ab, wenn die Rechnung negativ würde. Nachprüfen ließ es sich nicht — zwei aufeinanderfolgende `dbus-send`-Aufrufe sind nicht simultan, die MultiPlus-AcIn-Werte hatten sich zwischen den Reads von ~−150 auf ~−220 W je Phase verschoben. **Konsequenz falls bestätigt:** Bei viel PV auf einer Phase wären die AC-Lasten nach oben verzerrt (negative Phasenanteile fielen weg). Betrifft die Summenaussage aus dem Abschnitt oben nicht — die wurde zweimal in verschiedenen Betriebszuständen gegengerechnet und ging auf. Für eine saubere Klärung bräuchte es einen einzelnen Aufruf, der `/Ac` und den vebus gleichzeitig liest (z. B. ein kleines Skript über eine dauerhafte D-Bus-Verbindung statt Einzel-`dbus-send`).
+→ Verschoben nach [[Brauchwasser-Wärmepumpe]] (23.08.2026).
 
 ## Idee „nachts kleiner MultiPlus 5000, tags die 3× 10000" — geprüft, ⛔ so nicht umsetzbar (2026-07-26)
 
@@ -1106,137 +1022,9 @@ Der Ölpreis ändert die **Wirtschaftlichkeit**, nicht die **Physik**:
 
 ---
 
-## 🔬 BW-WP-Stufentest: Auswertung (13.08.2026) — Modell widerlegt, Ursache gefunden
+## BW-WP-Stufentest: Auswertung und verkehrte Pumpenrichtung (13.08.2026)
 
-Auswertung des am 26.07. gestarteten Versuchs (Aufbau, Vorhersagen und Messprotokoll siehe Abschnitt oben). Primärgröße: Tages-`change` von `sensor.0xa085e3fffeb7c870_energy`.
-
-### Messwerte
-
-| Phase | Tageswerte | Mittel |
-|---|---|---|
-| Basislinie (10.–25.07., ohne Ausreißer 23.07.) | 15 Tage | **3,19 kWh/Tag** (σ 0,36) |
-| **A** — Pumpe stromlos, Hahn offen (26.–28.07.) | 1,40* / 0,80 / 0,75 | **0,78** (*26.07. Teiltag, ausgeklammert) |
-| **B** — zusätzlich Hahn zu (29.–31.07.) | 0,60 / 0,91 / 0,54 | **0,68** |
-| Nachlauf (01.–12.08., Zustand unverändert) | 12 Tage | **0,52** |
-
-Die aus HA rekonstruierte Basislinie (3,19 / σ 0,36) trifft den im Versuchsaufbau notierten Wert exakt — die Datengrundlage ist konsistent.
-
-### ❌ Vorhersage falsifiziert
-
-**Erwartet war für Phase A: 3,1–3,2 kWh/Tag („praktisch unverändert"), Falsifikationsschwelle < 2,79.**
-**Gemessen: 0,78 kWh/Tag — 6,6 σ unter der Basislinie.**
-
-Die Annahme „die bedarfsgesteuerte Pumpe läuft im Nachtfenster ohnehin nicht, eine stromlose Pumpe ist kein geschlossenes Ventil" ist damit klar widerlegt. **Die Pumpe lief faktisch durch**, unabhängig davon, was ihre Steuerung nominell tut. Der vorab festgelegte Falsifikationstest hat genau das geleistet, wofür er gedacht war.
-
-### Zerlegung — das Ziel des Versuchs
-
-> ⚠️ **Ursache inzwischen gefunden (13.08.2026):** Der „Pumpenanteil" unten ist **nicht** der Preis der Zirkulation, sondern die Folge eines **Installationsfehlers — die Pumpe fördert verkehrt herum**. → Abschnitt „Verkehrte Pumpenrichtung" am Dateiende. Die Prozentzahlen bleiben als Messung gültig, die Zuordnung „Pumpe/Zirkulation ist schuld" nicht.
-
-```
-Pumpenanteil          Basis − A  =  2,42 kWh/Tag   (75,7 %)
-Schwerkraft / Kreis   A − B      =  0,09 kWh/Tag   ( 2,9 %)
-Rest (Dämmung+Zapf)   B          =  0,68 kWh/Tag   (21,4 %)
-```
-
-**Der gestaffelte Aufbau hat sich ausgezahlt.** Ein einzelner Schritt „Hahn zu + Pumpe aus" hätte nur einen Gesamteffekt von 2,5 kWh gezeigt, ohne die Anteile zu trennen — und hätte zur falschen Konsequenz geführt (Dämmung/Schwanenhals statt Pumpensteuerung). Die Schwerkraftzirkulation, ursprünglich als Hauptverdächtiger gehandelt, ist mit 2,9 % praktisch bedeutungslos.
-
-**Physikalische Einordnung:** Die 2,42 kWh/Tag sind überwiegend *nicht* Pumpenstrom (eine Zirkulationspumpe zieht 10–30 W ≙ max. 0,72 kWh/Tag), sondern die **in der Leitung abgegebene Wärme**, die die BW-WP nachliefern muss: 2,42 kWh el. × COP 3 ≈ 7 kWh Wärme/Tag ≈ **300 W Dauerverlust**. ⬜ **Offen:** Hängt die Zirkulationspumpe am selben Zigbee-Zähler wie die BW-WP? Falls ja, enthält der Wert auch den Pumpenstrom.
-
-**Ersparnis im gemessenen Zustand:** 2,67 kWh/Tag = **975 kWh/Jahr ≈ 341 €** (Netzbezug 34,94 ct) bzw. 72 € bei reiner PV-Deckung.
-
-### Entscheidung: Siphon + Rückschlagventil + ΔT-Automatik
-
-Umgesetzt wird: **Siphon (Schwanenhals) und Rückschlagventil in den Zirkulationskreis**, dazu eine **Automatikschaltung, die über die Temperaturdifferenz zwischen Zirkulationsrücklauf und Heißwasser bedarfsgesteuert schaltet**. Danach Wiederinbetriebnahme.
-
-⚠️ **Wichtig für die Einstellung — hier liegt der eigentliche Hebel:** Die alte Pumpe galt ebenfalls als „bedarfsgesteuert" und lief trotzdem durch. Eine ΔT-Steuerung mit **enger** Hysterese hält die Leitung dauerwarm und verhält sich am Ende wie Dauerlauf. Der Spareffekt hängt fast vollständig davon ab, **wie weit die Leitung auskühlen darf**:
-
-| ΔT-Schwelle | Wirkung |
-|---|---|
-| eng (~5 K) | Leitung bleibt warm, häufiges Takten → wenig Ersparnis |
-| **großzügig (15–20 K)** | Leitung kühlt zwischendurch ab → deutliche Ersparnis, kurze Wartezeit |
-
-→ **Großzügig anfangen**, nur bei echtem Alltagsproblem enger stellen. Der Siphon unterstützt das, weil ohne Schwerkraftzirkulation die Auskühlung langsamer erfolgt und die Pumpe seltener anspringt.
-
-### Geprüft und verworfen: Zirkulation dauerhaft absperren
-
-| | Ersparnis brutto | Nebenkosten | netto |
-|---|---|---|---|
-| Dauerhaft ab (Absperrventile) | 330 € | −25 € Wasser (15 l/Tag), −29 € Nachlaufwärme | **276 €** |
-| ΔT-Steuerung großzügig (Schätzung 1,2 kWh/Tag) | 254 € | — | **254 €** |
-| ΔT-Steuerung eng (Schätzung 2,0 kWh/Tag) | 152 € | — | 152 € |
-
-**Nur 23 €/Jahr Unterschied** zwischen Dauerabschaltung und gut eingestellter Automatik — die Einstellung der Schwelle (100 € zwischen großzügig und eng) wiegt schwerer als die Grundsatzfrage.
-
-⚠️ **Hygienisch ist Absperren die schlechteste Variante:** Eine abgesperrte, wassergefüllte Leitung bleibt am Trinkwassernetz und wird zum **Totstrang** — stehendes Wasser bei Raumtemperatur (20–30 °C) liegt mitten im Legionellen-Wachstumsbereich (25–45 °C). DVGW W 551 / VDI 6023 verlangen für nicht mehr genutzte Leitungen **fachgerechtes Trennen und Entleeren**, nicht bloßes Absperren. Für 23 €/Jahr nicht vertretbar.
-
-### ⬜ Phase C — nach dem Umbau messen
-
-**Vor der Wiederinbetriebnahme:** Die Leitung stand seit 26.07. rund 3 Wochen still (Totstrang-Situation). Einmal **längere Zeit bei voller Speichertemperatur durchspülen** (> 60 °C an der Entnahmestelle), erst danach die Automatik scharf schalten.
-
-Erwartungswerte für die Woche nach dem Umbau — **Untergrenze ist 0,68 kWh/Tag** (echter Zapfbedarf + Speicherdämmung, darunter geht es physikalisch nicht):
-
-| Messung | Interpretation |
-|---|---|
-| 1,0–1,5 kWh/Tag | **Zielbereich** — Großteil der Ersparnis gesichert, voller Komfort und Hygiene |
-| ~2,0 kWh/Tag | Schwelle zu eng → ΔT großzügiger stellen |
-| ~3,0 kWh/Tag | Automatik wirkungslos, Zustand wie vorher → Steuerung prüfen (Sensorposition? Hysterese?) |
-
----
-
-## 🔧 Verkehrte Pumpenrichtung — die eigentliche Ursache (13.08.2026)
-
-**Befund:** Die Zirkulationspumpe fördert **in die falsche Richtung**. Sie zieht das Wasser nicht von der Verbrauchsstelle zurück in den Speicher, sondern **aus dem Speicher heraus zur Verbrauchsstelle**.
-
-### Der Mechanismus: thermischer Kurzschluss durch den Speicher
-
-```
-richtig:   Speicherkopf (heiß) → Vorlauf → Zapfstelle → Rücklauf → Speichermitte (kühler)
-falsch:    Speichermitte (lau) → Rücklauf → Zapfstelle → Vorlauf → Speicherkopf (heiß)
-                                                                    ↑ kühlt genau die Zone ab,
-                                                                      die die WP gerade erwärmt hat
-```
-
-Bei korrekter Richtung wird das **abgekühlte** Wasser dort eingespeist, wo der Speicher ohnehin kühler ist — die Schichtung bleibt erhalten. Verkehrt herum wird lauwarmes Wasser permanent **in die heiße Zone** gepumpt: Die Schichtung wird zerstört, der Speicherkopf kühlt ab, die WP heizt nach, und die Pumpe verteilt die frische Wärme sofort wieder nach unten. Ein Kreislauf, der sich selbst am Laufen hält.
-
-**Damit ist die offene Frage aus der Auswertung beantwortet, warum die „bedarfsgesteuerte" Pumpe durchlief:** Hängt die Steuerung an einem Fühler, der durch die verkehrte Strömung dauerhaft zu kühles Wasser sieht, meldet sie permanent Bedarf. Die Steuerung hat nicht versagt — sie hat auf ein falsches Signal korrekt reagiert.
-
-### Neubewertung der Auswertung
-
-Die gemessenen 2,42 kWh/Tag „Pumpenanteil" sind damit **Fehlerfolge, nicht Zirkulationskosten**. Eine korrekt installierte Zirkulation hätte nie so viel gekostet. Auch das Scheitern der Vorhersage erklärt sich neu: Das Modell war nicht falsch gedacht — im System steckte ein Fehler, den keine der drei Hypothesen (Pumpenlaufzeit / Schwerkraft / Dämmung) auf dem Zettel hatte.
-
-**Korrigierte Erwartung für Phase C: 0,7–1,0 kWh/Tag** statt der zuvor genannten 1,0–1,5 — der Durchmischungsanteil entfällt mit der richtigen Fließrichtung vollständig.
-
-### Jahreskosten in absoluten Zahlen (Jahresmittel inkl. Winterkorrektur, Mischpreis 21 ct)
-
-| Zustand | kWh/Tag | kWh/Jahr | €/Jahr |
-|---|---|---|---|
-| **A** bisher — Pumpe verkehrt, Dauerlauf | 3,93 | 1.434 | **301 €** |
-| **C** repariert — richtige Richtung + ΔT-Automatik *(Erwartung)* | ~1,10 | ~400 | **~84 €** |
-| **B** Zirkulation ganz aus *(Zustand seit 26.07.)* | 0,75 | 274 | **57 €** |
-
-```
-A → C   Reparatur (Richtung + Steuerung)     ~217 €/Jahr
-C → B   zusätzlich komplett abschalten         ~27 €/Jahr
-A → B   beides zusammen                      ~244 €/Jahr
-```
-
-**Rund neun Zehntel der Ersparnis kommen vom behobenen Installationsfehler**, nicht vom Verzicht auf die Zirkulation. Die Zirkulation selbst kostet nach der Reparatur nur noch ~27 €/Jahr — dafür sofort warmes Wasser und kein Legionellenthema. Damit ist die Absperr-Diskussion endgültig erledigt.
-
-Aufschlüsselung des Ausgangszustands: **Zapfbedarf 274 kWh/Jahr (19 %) · Zirkulationsverlust 1.161 kWh/Jahr (81 %)** — vier Fünftel des Verbrauchs waren Verlust.
-
-⚠️ **Belastbarkeit:** Der Zähler steht bei 57,75 kWh gesamt, die Messhistorie umfasst 35 Tage (Sensor läuft seit 09.07.2026). Die Jahreszahlen sind eine Hochrechnung um Faktor ~25. Solide ist der Tagesmittelwert der Basislinie (17 Tage, σ 11 %); geschätzt sind die Winterfaktoren (Kaltwasser 15→8 °C ≈ 1,18 · COP im kalten Keller ≈ 1,20 · Leitungsverlust ≈ 1,23), die aus 1.164 kWh die 1.434 machen. **Frühere Angaben von „341 €/Jahr" waren zu hoch** — sie rechneten Sommerwerte mit vollem Netzpreis.
-
-### Drei Punkte für den Umbau
-
-1. **Rückschlagventil in Fließrichtung einbauen** — es verhindert dann nicht nur Schwerkraftzirkulation, sondern erzwingt dauerhaft die richtige Richtung. Der Fehler kann nicht zurückkommen.
-2. **Fühlerposition der ΔT-Automatik prüfen** — der Fühler muss das **zurückkehrende, abgekühlte** Wasser kurz vor Speichereintritt messen. Sitzt er auf der falschen Seite, entsteht wieder ein Signal, das nicht zum Bedarf passt (genau der Effekt, der die alte Steuerung zum Dauerläufer machte).
-3. **Nach dem Umbau die Richtung verifizieren** — im Betrieb beide Leitungen anfassen: Der Vorlauf muss deutlich wärmer sein als der Zirkulationsrücklauf. Sind beide gleich heiß, stimmt die Richtung immer noch nicht.
-
-### Weitere Präzisierungen zur Auswertung (13.08.2026)
-
-- **Urlaubstage aus der Nachlaufphase herausrechnen:** Der 02.08. (0,05) und der 06.08. (0,15) waren Abwesenheit. Bereinigt ergibt sich für 29.07.–12.08. **0,62 kWh/Tag (σ 0,15 = 25 %)** statt 0,55 (σ 0,23 = 42 %). → **Für Phase C reichen damit fünf saubere Messtage**, nicht sieben.
-- **Störgröße im Alltag bestätigt:** Bei geschlossener Zirkulation steigt der Verbrauch bei Wasserentnahme spürbar, weil erst kaltes Vorlaufwasser ablaufen muss. Die im Versuchsaufbau geschätzten ~0,23 kWh/Tag sind damit real. **Konsequenz: Die Untergrenze für Phase C ist nicht 0,68, sondern ~0,39 kWh/Tag** (0,62 − 0,23 Störgröße = echter Zapfbedarf + Speicherdämmung).
-- **Auswertungsvorschrift für Phase C:** Sobald die Zirkulation wieder läuft, entfällt die Störgröße. Ein naiver Vergleich gegen 0,62 würde die Zirkulation zu günstig aussehen lassen — **korrekt ist Phase C minus 0,39**. Beispiel: Phase C misst 1,20 → Zirkulation kostet real 0,81 kWh/Tag, nicht 0,58. *(Für die Geldrechnung bleibt dagegen die Differenz der Gesamtverbräuche maßgeblich, da die Störgröße real in Strom und Wasser bezahlt wird.)*
+→ Verschoben nach [[Brauchwasser-Wärmepumpe]] (23.08.2026).
 
 ## Cerbo-Wächter: Reboot- und Ausfallmeldung per Pushover (13.08.2026) ✅
 
@@ -1832,7 +1620,7 @@ Zurück: Reolink 03:53:52, Cerbo 03:53:53, Sonos 03:54:39, Kamera TW 03:54:53.
 
 **Diagnostische Trennschärfe:** Genau diese Aufteilung — externe IP-Geräte weg, interne Gäste unbeeinträchtigt — grenzt die Ursache auf ein **Netzsegment außerhalb des Proxmox-Uplinks** ein. Es ist die Ergänzung zum bekannten Muster „sekundengleiche `unavailable` über mehrere Geräte = zentraler Ausfall, nie Geräte-Crash": Die Liste der **nicht** betroffenen Geräte lokalisiert den Ausfall.
 
-### Verdacht: nächtliches UniFi-Wartungsfenster (am 18.08. bestätigt, s. Abschnitt „Ursache bewiesen" unten)
+### Verdacht: nächtliches UniFi-Wartungsfenster (am 18.08. bestätigt, Beweis in [[homelab-infrastruktur#Netzwerk-Vorfall 18.08.2026 und Fernzugriff]])
 
 Die drei bekannten Link-Aussetzer ohne Reboot liegen alle im selben Nachtfenster:
 
@@ -1893,71 +1681,296 @@ Genau das Verhalten, das am 18.08. um 3:52 zur Fehldeutung führte — nur ist e
 
 ## Ursache bewiesen: Firmware-Auto-Update des USW-24-PoE (18.08.2026)
 
-Mit dem SSH-Zugang zur UDM Pro ist der Fall abgeschlossen — es war kein Verdacht mehr nötig, die Logzeile steht da:
+→ Verschoben nach [[homelab-infrastruktur#Netzwerk-Vorfall 18.08.2026 und Fernzugriff]] (23.08.2026).
 
-```
-[2026-08-18T03:49:19,414+02:00] <inform-32> WARN dev -
-Device USL24PB[9c:05:d6:50:6d:93] will be upgraded to version: 7.5.10.17129,
-scheduled: [true], rolling: [false], external: [false]
-```
+## E-Auto-Bilanz 6,96 MWh ohne Ladevorgang (18.08.2026) ✅ behoben
 
-**`scheduled: [true]`** = geplantes Auto-Update, kein Handeingriff. Der lückenlose Ablauf aus `/data/unifi/logs/server.log` und dem UDM-Journal:
+**Folgeschaden des 80-s-Netzausfalls von 03:52** (Ausfallanalyse im Abschnitt oben, Netzwerk-Ursache in [[homelab-infrastruktur#Netzwerk-Vorfall 18.08.2026 und Fernzugriff]]) — diesmal traf es das Energie-Dashboard.
 
-| Zeit (lokal) | Ereignis |
+**Symptom:** Energie-Dashboard zeigte für heute 6,96 MWh unter „E-Auto", obwohl das Auto nicht geladen wurde.
+
+**Befund:** `sensor.openwb_geladen` hatte einen 8-Sekunden-Aussetzer:
+
+| Zeit | Wert |
 |---|---|
-| 03:49:17 | `autoupdate-check` findet Firmware **7.5.10.17129** für die USL-Switch-Familie |
-| 03:49:19 | Controller plant das Upgrade für `USL24PB` (= **USW-24-PoE**, `192.168.2.108`) ein |
-| **03:52:24** | Cerbo `eth0: Link is Down` — der Switch startet nach dem Flashen neu |
-| **03:53:44** | Cerbo `Link is Up` (80 s Ausfall) |
-| 03:53:50 | **DHCPDISCOVER-Welle**: Switch selbst, `einstein` (Cerbo), `Reolink`, `openWBPro`, `Victron-VM-3P75CT` (Gridmeter), diverse Handys; der U6-Pro-AP verbindet sich neu mit dem Controller (`connected_at`) |
-| 03:54:25 | Controller provisioniert den Switch neu (`provisioned_at`) |
+| 17.08. 20:00 | 6960,67 |
+| 18.08. 03:53:47 | **0** |
+| 18.08. 03:53:55 | 6960,67 |
 
-Die Firmware in der Gerätedatenbank steht jetzt auf `7.5.10.17129` — das Update lief also durch.
+Die Statistik-Summe sprang im 5-Minuten-Bucket `03:50` von 162,75 auf 7123,42 — Differenz exakt 6960,67, also der komplette Zählerstand als Tagesverbrauch.
 
-**Warum ein DHCPDISCOVER des Switches der Kronzeuge ist:** Ein `DHCPREQUEST` ist eine normale Lease-Erneuerung, ein **`DHCPDISCOVER` dagegen ein Neuanfang ohne jede Zustandskenntnis**. Ein Switch macht das nur nach einem Neustart. Dass er in derselben Sekunde auftritt wie der aller angeschlossenen Geräte, schließt „einzelnes Gerät spinnt" endgültig aus.
+**Mechanik:** `state_class: total_increasing` heißt für den Recorder „ich zähle nur aufwärts, ein kleinerer Wert ist ein Reset". HA sah 6960,67 → 0 → 6960,67 und buchte folgerichtig 6960,67 kWh Zuwachs seit dem vermeintlichen Reset. Die Logik ist korrekt, sie war nur mit einer Lüge gefüttert. **Der Zählerstand selbst war nie beschädigt** — kaputt war ausschließlich die abgeleitete Summe.
 
-**Damit ist auch der 29.07. geklärt:** `uptime -s` der UDM meldet Boot am **2026-07-29 03:45:23** — genau die Minute, in der der Proxmox-Host seine drei Link-Flaps sah. Das war das Update der UDM selbst. Beide bisher rätselhaften Nachtereignisse sind derselbe Mechanismus.
+Dieselbe Fehlerklasse wie beim Fronius-Zähler und beim VE.Bus-Reset am 12.08.: Quelle fällt kurz weg, die Summe dippt, HA liest den Wiederanstieg als Zuwachs.
 
-### Die eigentliche Betriebsfrage
+**Warum die Null durchkam:** Der Flow filterte mit `if (!Number.isFinite(kwh)) return null;` — das fängt `NaN` und `Infinity`, aber `Number("")` ist `0` und damit endlich.
 
-Der Cerbo hängt am USW-24-PoE. **Jedes künftige Switch-Firmware-Update kostet die ESS-Regelung rund 80 s** und erzeugt eine Pushover-Ausfallmeldung. Nachts bei Grundlast folgenlos — aber es ist gut, den Auslöser zu kennen, statt jedes Mal Forensik zu betreiben.
+### Korrektur der Statistik
 
-Mitbetroffen bei jedem Switch-Neustart (aus der DHCP-Welle): Gridmeter `.182`, openWB Pro `.145`, Reolink `.95`, der U6-Pro-AP `.234` (PoE) und damit alle daran hängenden WLAN-Clients.
+Kein Service, sondern WebSocket-Kommando — über den `ws_command`-Escape-Hatch des HA-MCP-Servers direkt aufrufbar:
 
-**Nicht betroffen:** Proxmox `.241` samt aller LXC/VMs — er hängt direkt an der UDM (Port 1, laut Log `PORT_NOT_POE_CAPABLE`), nicht am Switch. Genau deshalb liefen HA, Z2M und MQTT lückenlos weiter; die Asymmetrie aus der Erstdiagnose ist damit nachträglich erklärt.
-
-**Stellschraube:** Das Auto-Update lässt sich in der UniFi-UI unter *Settings → System → Updates* abschalten oder auf ein Zeitfenster legen. Die Einstellung liegt auf UniFi-OS-Ebene, nicht in der `setting`-Collection der Network-App (dort steht nur `super_mgmt` mit `live_updates: auto`). Abwägung: Automatische Switch-Updates bringen Sicherheitsfixes ohne Zutun, kosten aber je Update ~80 s Netz. Bei einer Anlage ohne Notstromfunktion am AC-Out ist das vertretbar — nach dem Whole-home-Umbau lohnt die Frage neu.
-
-### UDM-SSH: Runbook (Stand 18.08.2026)
-
-**Der Zugang ist im Normalbetrieb ABGESCHALTET** und wird nur bei Bedarf aktiviert. Begruendung: Der Nutzen ist rein diagnostisch und faellt selten an; `sshd` lauscht auf `0.0.0.0:22`, also auch auf dem WAN-Interface, und wird ausschliesslich von der Firewall gedeckt. Die haelt zwar nachweislich dicht (Kette `UBIOS_WAN_LOCAL_USER` endet im DROP, ueber 463.000 verworfene Pakete), aber ein Dienst, der nicht laeuft, braucht keine Firewall.
-
-**Aktivieren:** UniFi-UI → *Settings → Control Plane → Console* → SSH einschalten. Danach genuegt `ssh udm`.
-
-**Danach wieder abschalten** — derselbe Schalter.
-
-| Was | Wo |
-|---|---|
-| Alias `udm` | `~/.ssh/config` → `root@192.168.2.1`, `IdentitiesOnly yes` |
-| Schluessel | `~/.ssh/id_ed25519_udm` (ed25519, **ohne Passphrase**) |
-| Auf der UDM | `/root/.ssh/authorized_keys` |
-
-Key und Config-Eintrag bleiben beim Abschalten des Dienstes erhalten — nach dem Wiedereinschalten sollte `ssh udm` also sofort funktionieren. ⚠️ **Nicht verifiziert:** ob UniFi OS die `authorized_keys` bei einem Firmware-Update (oder beim Umschalten) verwirft. Falls doch wieder nach einem Passwort gefragt wird, einmal wiederholen:
-
-```sh
-ssh-copy-id -i ~/.ssh/id_ed25519_udm.pub udm     # nur im echten Terminal!
+```
+recorder/adjust_sum_statistics
+  statistic_id: sensor.openwb_geladen
+  start_time:   2026-08-18T03:00:00+02:00     (Stundenraster!)
+  adjustment:   -6960.67
+  adjustment_unit_of_measurement: kWh
 ```
 
-**Drei Stolperfallen, die 20 Minuten gekostet haben:**
+Danach `sum` durchgehend 162,75, alle `change` = 0. HA zieht die Folgestunden automatisch mit.
 
-1. **Die UniFi-UI hat kein Key-Feld fuer die Konsole** — nur Benutzer und Passwort. Das Key-Feld unter *Network → Settings → System → Device SSH Authentication* gilt den **verwalteten Geraeten** (Switch, AP), nicht der UDM. Keys muessen deshalb per `ssh-copy-id` hinterlegt werden.
-2. **Passwort-Logins brauchen ein echtes TTY.** In der Claude-Code-Session — und generell bei gesetztem `DISPLAY` ohne installiertes `ssh-askpass` — erscheint gar kein Prompt, sondern sofort `Permission denied (publickey,keyboard-interactive)`. Das sieht wie eine Fehlkonfiguration aus, ist aber nur die fehlende Eingabemoeglichkeit. `ssh-copy-id` gehoert in ein normales Terminalfenster.
-3. **Kein Benutzername in der UI = `root`.** Fehlt das Feld, ist der Default gemeint. Ein neu gesetztes Passwort legt den SSH-Account zuverlaessig an; der blosse Schalter genuegt nicht immer.
+### Flow gehärtet (`flows/openwb-ev-energie-mqtt.json`)
 
-**Auth-Lage** (fuer spaetere Bewertung): `PermitRootLogin yes`, `PasswordAuthentication no`, aber `ChallengeResponseAuthentication yes` — der Passwort-Login laeuft also ueber PAM/keyboard-interactive. Die `sshd_config` zu haerten lohnt nicht: Sie ist auf UniFi OS nicht persistent und beim naechsten Firmware-Update wieder ueberschrieben.
+Die Function `Wh → kWh` wurde zu `Wh → kWh + Wächter` mit drei Regeln:
 
-**Was der Zugang liefert** (Quellen, die es ueber die UI nicht gibt):
-- `/data/unifi/logs/server.log` — die eigentliche Historie (Firmware-Upgrades, Provisioning). Format `[2026-08-18T03:49:19,414+02:00]`, **Grep-Muster braucht das `T`**, sonst leeres Ergebnis.
-- `journalctl` — Zeitzone **Europe/Berlin** (der Cerbo laeuft dagegen auf UTC). `dnsmasq-dhcp`-Zeilen verraten Netzausfaelle: **`DHCPDISCOVER` = Geraet ohne Zustand, also neu gestartet; `DHCPREQUEST` = normale Lease-Erneuerung.**
-- MongoDB `127.0.0.1:27117`: `mongo --quiet --port 27117 ace --eval '...'`, Collection `device` (`version`, `connected_at`, `provisioned_at`). **`event` ist bei UniFi OS 5.1.26 leer** — die Historie steckt im server.log.
-- ⚠️ `db.setting` mit key `mgmt` enthaelt `x_api_token` und `x_mgmt_key` im Klartext. Bei Abfragen gezielt projizieren, nicht das ganze Dokument ausgeben.
+1. Nicht-numerische Payloads verwerfen.
+2. **Werte ≤ 0 immer verwerfen** — ein Wallbox-Energiezähler fällt nicht auf 0. Fängt auch den leeren String.
+3. Rückwärtssprünge verwerfen, aber als möglichen echten Zähler-Reset vormerken. Erst wenn der niedrigere Stand **15 Minuten und 3 Meldungen** lang plausibel bleibt, wird er per Offset übernommen: `offset = lastPublished − raw`. Der publizierte Wert bleibt dabei stetig, HA sieht also gar keinen Reset.
+
+Regel 3 ist die Lehre aus dem 12.08.: Ein Monotonie-Wächter **ohne** Reset-Erkennung friert nach einem echten Zählerwechsel dauerhaft ein.
+
+Zweiter Function-Ausgang → `victron/ev/energy/_diag` (retained, JSON mit `action`/`reason`/`raw`/`offset`), damit Verwerfen sichtbar ist statt still zu passieren.
+
+**Lokal durchgetestet** vor dem Deploy: echter Störfall, leerer Payload, echter Zählerwechsel (wird nach der Frist sauber übernommen und zählt monoton weiter), kurzer Rücksprung mit Rückkehr. Deploy per `PUT /flow/clev0tab00000001`; live verifiziert über den Node-RED-Statuskanal — Function meldete `Start 6960.67 kWh`, alle vier MQTT-Nodes verbunden.
+
+> [!TIP] Node-RED live beobachten ohne Editor
+> `ws://192.168.2.80:1880/comms`, nach dem Handshake `{"subscribe":"status/#"}` und `{"subscribe":"debug"}` senden. Liefert Node-Status und Debug-Ausgaben im Klartext — der schnellste Weg zu prüfen, ob ein frisch deployter Flow wirklich Daten verarbeitet. Ein roher WebSocket-Client in reinem Python genügt (kein `websockets`-Paket nötig).
+
+## Zähler-Flows systematisch durchgegangen (18.08.2026) ✅
+
+Anlass: Nach dem openWB-Phantomzähler die Frage, welche anderen `total_increasing`-Zähler beim nächsten nächtlichen Switch-Update verwundbar sind. Alle 20 Tabs, 9 Zähler-Sensoren geprüft.
+
+### Warum es nur openWB traf — der strukturelle Unterschied
+
+Gegenprobe an den beiden härtesten Ereignissen: **Cerbo-Absturz 12.08.** und **Switch-Ausfall 18.08. 03:52**. Bei Grid und Batterie in beiden Fällen **kein einziger Sprung**, alle Stundenzuwächse plausibel.
+
+Der Grund ist die Bezugsart: Die Victron-Werte kommen über `victron-input-*`-Nodes per D-Bus — fällt die Verbindung weg, sendet der Node **gar nichts**. Ein fremder MQTT-Publisher wie openWB schickt beim Hochfahren dagegen aktiv eine 0.
+
+> [!IMPORTANT] Lücke vs. Lüge
+> `total_increasing` reagiert nur auf Werte, die es auch sieht. Eine Meldelücke ist harmlos, ein falscher Wert ist es nicht. Deshalb brauchen D-Bus-Quellen keinen Nullwert-Schutz, fremde MQTT-Publisher aber sehr wohl.
+
+### Stand der Flows
+
+| Flow / Sensor | Schutz | Status |
+|---|---|---|
+| MultiPlus AC-Abgabe + AC-Aufnahme | Offset-Reset-Erkennung, gestaffelte Fristen, State retained | ✅ Referenzmuster |
+| Fronius-Guard | `!isFinite \|\| v <= 0` | ✅ |
+| Wandlungsverluste | akkumuliert selbst, `MAXDELTA` | ✅ |
+| Eigenverbrauch (EUR) | Delta-Rechnung, `MAXAGE`/`MAXSELF`/`MAXHOUSE` | ✅ |
+| openWB EV | Wächter mit Reset-Erkennung | ✅ (heute gebaut) |
+| PV Energie gesamt | war Monotonie **ohne** Reset-Erkennung | ✅ **heute umgebaut** |
+| Grid Bezug/Einspeisung | keiner — durch D-Bus-Bezug gedeckt | ✅ bewusst so |
+| Batterie geladen/entladen | keiner — durch D-Bus-Bezug gedeckt | ✅ bewusst so |
+
+### PV-Summe auf das MultiPlus-Muster umgebaut
+
+Der alte Wächter war `if (sum < last - 0.001) return null;` — die bekannte Falle vom 12.08. Beide Ausgänge waren schlecht:
+
+- **ohne Neustart:** nach echtem Zähler-Reset friert der Sensor dauerhaft ein;
+- **mit Neustart:** `lastSum` lag nur im Node-Kontext, war also weg → der niedrige Wert wird übernommen → jetzt bucht HA den Reset als Phantom-Zuwachs.
+
+Neu (identisch zum MultiPlus, `flows/victron-pv-summe-mqtt.json`): Offset-Überbrückung statt Blockade, Bestätigungsfristen 2 min bei Sprung > 1 kWh / 30 min bei kleinem Dip, plus State-Persistenz über das retained Topic `victron/pv/_total_state` mit `arm`-Inject nach 15 s. Dazu die fachliche Untergrenze `v <= 0` aus dem openWB-Fall.
+
+Lokal durchgetestet: Normalbetrieb, 0-Glitch einer Quelle, echter Zählerwechsel (nach Frist per Offset überbrückt, Ausgabe stetig, zählt danach korrekt weiter), Neustart mit Restore (rettet den Anker — ohne ihn wären ~7.900 statt ~40.900 kWh publiziert worden), Erststart ohne State.
+
+Live verifiziert: Node grün (Offset 0), monoton 40895,72 → 40895,73 → 40895,74 kWh.
+
+**Restrisiko (gilt auch für den MultiPlus):** Geht das retained State-Topic verloren (Broker-Neuaufsetzung, manuelles Löschen), startet der Wächter ohne Anker und übernimmt den ersten Wert ungefiltert. Bewusst akzeptiert — die Alternative wäre ein Sensor, der nach jedem Broker-Umzug manuell angestoßen werden muss.
+
+### Nebenbefund, nicht kritisch
+
+`PV-Summe` im Tab *Victron Leistung* nutzt `Number(msg.payload) || 0`, macht aus einem fehlenden Wert also eine 0. Betrifft nur Momentanleistung (`measurement`), keine Statistik — kosmetisch.
+
+## Wandlungsverluste 18.08.2026: Wetter erklärt nur einen kleinen Teil — ~0,5 kWh fehlen
+
+18.08. nur **1,88 kWh** statt der üblichen 4–5 kWh. Kein Messfehler: Node grün, kein `stalled`, Akkumulator läuft (119,37 → 119,39 kWh).
+
+| | 18.08. (bis 17:30) | 17.08. | 13.–15.08. |
+|---|---|---|---|
+| Wandlungsverluste | **1,88** | 3,97 | 3,84–4,30 |
+| PV gesamt | 27,89 | 79,47 | 102–122 |
+| davon MPPT (**DC**-gekoppelt) | 5,69 | 16,57 | 21–26 |
+| davon Fronius (**AC**-gekoppelt) | 22,20 | 62,90 | 81–98 |
+| MultiPlus AC-Abgabe | 3,61 | 12,85 | 17–21 |
+| MultiPlus AC-Aufnahme | **3,98** | 0,84 | 0,55–0,62 |
+| Batterie geladen / entladen | 8,00 / 4,70 | 8,20 / 8,30 | ~9 / ~8 |
+| Netzbezug | 0,13 | 0,09 | 0,09–0,16 |
+
+**Der Hebel ist nicht die PV-Menge, sondern der Anteil, der durch den Wechselrichter muss.** Der Fronius ist AC-gekoppelt und läuft am MultiPlus vorbei ins Hausnetz — verlustfrei, was diese Kennzahl angeht. Nur die MPPT-Energie (DC) und die Batterie gehen durch die Wandlung. Und genau die DC-Seite ist heute auf ein Drittel eingebrochen (5,69 statt 16,57 kWh), die AC-Abgabe entsprechend auf 3,61 statt 12,85 kWh.
+
+**Betriebsart-Wechsel:** Der Multi lief heute netto als *Lader* statt als Wechselrichter — AC-Aufnahme 3,98 kWh gegen sonst 0,6. Bei Netzbezug von nur 0,13 kWh kam diese Energie vom Fronius: Die DC-PV reichte nicht zum Laden, also ging Fronius-AC-Strom per AC→DC in die Batterie. Bilanz passt: 5,69 (DC-PV) + 3,98 (AC→DC) = 9,67 kWh Zufluss für 8,00 kWh Batterieladung, Differenz = Ladeverlust.
+
+> [!NOTE] Der Sensorname ist an solchen Tagen irreführend
+> Die Formel ist eine geschlossene Bilanz — `Verlust = (MPPT + entladen + AC-Aufnahme) − (geladen + AC-Abgabe)`. Sie erfasst damit **beide** Richtungen. An normalen Tagen dominiert DC→AC, an ladelastigen Tagen wie heute steckt auch der AC→DC-Ladeverlust drin. „DC→AC" im Namen beschreibt den Normalfall, nicht die Rechnung.
+
+Überschlag mit den Tageswerten: `5,69 + 4,70 − 8,00 − 3,61 + 3,98 = 2,76` gegen publizierte 1,88. Die Überschlagsrechnung liegt systematisch ~0,7–0,9 kWh höher (17.08.: 4,66 gegen 3,97) — Folge der Monotonie-Klammer `if (loss > st.pub)`, die Rücksetzer nicht publiziert. Kein Sondereffekt von heute.
+
+### ⚠️ Korrektur (nach Rückfrage): Der Wetter-Effekt ist zu klein für den Einbruch
+
+Einwand Norbert: Wenn der Multi beim Laden mithalf, müssten die Verluste *höher* sein. Der Einwand trifft — und die Regression aus dem Leerlauf-Abschnitt bestätigt ihn: Bei `Verlust = 0,0332 × AC-Abgabe + 0,1736/h` ist der Wandlungsanteil **marginal**. Der Durchsatz-Rückgang von 12,85 auf 3,61 kWh erklärt gerade einmal `0,0332 × 9,24 = 0,31 kWh`. Der Leerlaufsockel läuft wetterunabhängig weiter. Der Tageswert dürfte also kaum sinken — er ist aber um über 1 kWh gefallen.
+
+**Der Nachtvergleich isoliert die Ursache** (00:00–08:00, kein PV, kein Ladebetrieb — dort gilt exakt `Verlust = entladen − AC-Abgabe`):
+
+| 00:00–08:00 | 17.08. | 18.08. |
+|---|---|---|
+| Batterie entladen | 4,40 | 4,30 |
+| AC-Abgabe | 3,28 | 3,17 |
+| Verlust **rechnerisch** | 1,12 | 1,13 |
+| Verlust **gebucht** | 1,24 | **0,63** |
+
+Nahezu identischer Durchsatz, halber gebuchter Verlust. Die Lücke sitzt in den Stunden **04:00, 05:00 und 07:00**, die exakt 0,00 kWh zeigen, obwohl die Batterie dort 1,40 kWh entladen und der Multi 1,04 kWh abgegeben hat. Aufsummiert fehlen **~0,50 kWh** — exakt die Differenz.
+
+**Das ist der Netzausfall von 03:52, Folgeschaden Nummer zwei** (nach dem openWB-Phantomzähler). Und es ist **kein Bug, sondern der eingebaute Schutz**: Der Flow verwirft Fenster, wenn die AC-Seite steht, während DC läuft — „lieber eine Lücke als ein Fehlwert", genau um die Explosion vom 12.08. zu verhindern. Wahrscheinlichster Auslöser: Der MultiPlus-Monotonie-Wächter hielt nach dem Ausfall seine Ausgabe zurück (Dip-Bestätigung bis 30 min), womit `acOut` aus Sicht des Verlust-Flows stillstand.
+
+> [!IMPORTANT] Konsequenz für die Interpretation
+> Nach jedem Netz-/Cerbo-Ausfall ist der Tagesverlust **zu niedrig**, nicht zu hoch. Die Kennzahl unterschätzt still — die verworfenen Fenster hinterlassen keine Spur im Sensor, nur Null-Stunden bei laufendem Umsatz. Beim Bewerten von Verlusttagen also immer erst gegen `Batterie entladen − AC-Abgabe` der Nachtstunden gegenrechnen.
+
+**Offen:** Die genaue Auslöse-Ursache steht nur in den `node.warn`-Meldungen des Flows (Node-RED-Log), nicht in HA. Zum Festnageln beim nächsten Ereignis den Debug-Kanal mitlesen.
+
+### Nachtrag 17:46 — der Rest des Tages misst korrekt
+
+Stand 1,95 kWh. Gegenprobe der Nachmittagsstunden (Formel gegen gebucht): 14:00 → 0,22/0,18, **15:00 → 0,24/0,24**, 13:00 → 0,10/0,05. Der Flow rechnet sauber, die Abweichungen sind das Quantisierungsrauschen der Batrium-Zähler (0,1-kWh-Stufen). Keine verworfenen Fenster mehr nach dem Vormittag.
+
+Der niedrige Nachmittagswert hat einen simplen Grund: **AC-Abgabe 0,22 kWh in fünf Stunden.** Der Multi hat kaum wechselgerichtet — der Fronius versorgte das Haus direkt und lud den Überschuss über den Lader in die Batterie (1–2 kWh/h). Der variable DC→AC-Anteil fällt damit weg, übrig bleiben Leerlauf + ~3 % Ladeverlust. Modellabgleich 12–17 Uhr: 0,71 kWh gebucht gegen 0,87 kWh reinen Leerlaufsockel — richtige Größenordnung.
+
+**Tagesprognose:** ~3,1 kWh gebucht bzw. ~3,6 kWh inklusive der fehlenden 0,5 kWh, gegen 3,97 (17.08.) und 4,05 (16.08.). Die Restdifferenz von ~0,3 kWh ist der marginale Wandlungsanteil — der einzige echte Wettereffekt. **Fazit: Nur die drei Nachtstunden sind defekt, nicht der Tag.**
+
+### Verifikation der Verlust-Bilanz: alle 12 vebus-Energiepfade geprüft (18.08.2026)
+
+Anlass: Rückfrage, ob die Kennzahl womöglich Fronius-Verluste einsammelt und warum sie sinkt, obwohl der Multi als Lader zugeschaltet war (Flow *Fronius-Ladedeckel*, setzt `/Settings/SystemSetup/MaxChargeCurrent` von 5 auf 50 A).
+
+Gemessen per temporärem Node-RED-Diagnose-Tab (danach wieder gelöscht), Rohwerte seit dem Zähler-Reset vom 12.08.:
+
+| Pfad | kWh | im Flow |
+|---|---|---|
+| InverterToAcIn1 | 68,34 | ✅ AC-Abgabe |
+| InverterToAcOut | 1,04 | ✅ AC-Abgabe |
+| AcIn1ToInverter | 6,43 | ✅ AC-Aufnahme |
+| AcIn1ToAcOut | 1,71 | Durchleitung, nicht gewandelt |
+| AcOutToAcIn1 | 5,44 | Durchleitung, nicht gewandelt |
+| **OutToInverter** | **0,35** | ⚠️ **fehlt in der Bilanz** |
+| AcIn2* / InverterToAcIn2 | 0 | kein zweiter AC-Eingang |
+
+**Ergebnis: Die Bilanz ist korrekt konstruiert.** Sie umschließt DC-Bus + MultiPlus; der Fronius hängt AC-seitig außerhalb und taucht nicht auf — seine Wandlungsverluste stecken bereits im gemessenen Fronius-Ertrag (AC-seitiger Zähler). Einzige echte Lücke: `OutToInverter` (Laden aus einer Quelle am AC-Out), mit ~0,06 kWh/Tag ohne praktische Bedeutung. ⬜ Bei Gelegenheit als 7. Quelle ergänzen.
+
+### Warum die Verluste bei Lader-Zuschaltung trotzdem sinken
+
+Der intuitive Denkfehler: An einem sonnigen Tag ist der Multi **nicht** im Leerlauf, während die MPPTs laden — dann arbeitet er am härtesten.
+
+| | 17.08. (sonnig) | 18.08. (trüb) |
+|---|---|---|
+| MPPT-Ertrag (DC) | 16,57 | 5,69 |
+| Batterieladung | 8,20 | 8,00 |
+| **DC-Überschuss, der gewandelt werden MUSS** | **+8,37** | **−2,31** |
+| Durchsatz durch den Wandler | **13,69** | **7,59** |
+
+DC-gekoppelte PV hat nur einen Weg ins Haus: durch den Wechselrichter. Gestern mussten 8,37 kWh Überschuss plus 8,30 kWh nächtliche Batterieentladung gewandelt werden. Heute reichten die MPPTs nicht einmal für die Batterie — **die Lader-Zuschaltung kam also nicht zusätzlich zum Normalbetrieb, sondern anstelle des weggefallenen Wechselrichterbetriebs.** 45 % weniger Durchsatz, entsprechend weniger Abwärme; der Leerlaufsockel bleibt konstant.
+
+**Zerlegung 17.→18.08.:** 3,97 − 0,31 (weniger DC→AC) **+ 0,10 (Lader-Zuschaltung)** − 0,50 (fehlende Nachtstunden) = **3,26 kWh** erwartet, ~3,1 prognostiziert gebucht. Die Lader-Zuschaltung ist der einzige Posten mit positivem Vorzeichen — sie erhöht die Verluste tatsächlich, nur mit ~3 % Ladeverlust auf 3,14 kWh Mehrmenge zu wenig, um sichtbar zu werden.
+
+## ⚠️ Zweite Regression widerspricht dem Leerlaufsockel (18.08.2026) — zu klären
+
+Anlass: Rückfrage, ob die Verluste hauptsächlich beim DC→AC-Wandeln entstehen, also nachts bzw. wenn die MPPT-Energie bei voller Batterie durchgereicht wird.
+
+Eigene Regression über **120 Stunden (13.–17.08.)**, Datenbasis gegen die Tagessummen validiert (alle 5 Tage exakt):
+
+```
+Verlust = 0,0710 × AC-Abgabe + 0,1176      R² = 0,47
+```
+
+| Kennwert | diese Rechnung (13.–17.08.) | Vault-Regression (08.–10.08.) |
+|---|---|---|
+| Sockel | **118 W** | 174 W |
+| marginal je kWh | **7,1 %** | 3,3 % |
+| Direktmessung Ruhestunden | **107 W** (n=22) | 200 W (n=12) |
+
+**Beide Methoden dieses Zeitraums stimmen überein** (Regression 118 W, Direktmessung 107 W) und liegen deutlich unter den bisher als maßgeblich notierten 174–200 W.
+
+**Wahrscheinlichste Erklärung: der Zusammenhang ist nicht linear.** Beide Geraden laufen durch ihren jeweiligen Datenschwerpunkt; eine steilere Steigung drückt zwangsläufig den Achsenabschnitt. Bei 3 parallelen Multis mit Zuschaltschwellen ist Nichtlinearität zu erwarten. Der Achsenabschnitt ist eine **Extrapolation** auf einen Betriebspunkt, der in den Daten kaum vorkommt — real gemessene Ruhestunden sind belastbarer als jede Extrapolation.
+
+⬜ **Zu klären, bevor die Winter-Entscheidung darauf aufbaut:** Liegt der Bereitschaftsverbrauch näher an 110 oder an 175 W? Der Unterschied verschiebt das Standby-Sparpotenzial um gut ein Drittel. Sauberer Weg: gezielt Stunden mit Durchsatz ≈ 0 über mehrere Wochen sammeln, statt aus Lastdaten zu extrapolieren. Zweite Hypothese, die zu prüfen wäre: Der seit 12.08. eingebaute `stalled`-Check verwirft Fenster und könnte systematisch untererfassen (am 18.08. nachweislich 0,5 kWh).
+
+### Wo die Verluste zeitlich anfallen
+
+| Zeitfenster | mittlere Verlustleistung |
+|---|---|
+| 00–07 Uhr (Batterie versorgt Haus) | 140 W |
+| 09–16 Uhr (PV-Betrieb) | **188 W** |
+| Stunden fast ohne Durchsatz (n=22) | 107 W |
+| Stunden mit ≥ 1 kWh Durchsatz (n=25) | **244 W** |
+
+**Nicht die Nacht ist der Haupttreiber, sondern der sonnige Nachmittag** — nachts liefert der Multi 0,4–0,6 kWh/h, mittags bis 2,7 kWh/h. Aufteilung über die 120 h: 68 % Sockel, 32 % durchsatzabhängig.
+
+### Betriebsfrage: Multi-Durchsatz drosseln, um Verluste zu sparen? → Nein
+
+Geprüft am 18.08.2026. **Verlustminimierung ist hier die falsche Zielgröße** — der Durchsatz skaliert mit dem Nutzen.
+
+Bei voller Batterie hat MPPT-Energie nur zwei Wege: durch den Wechselrichter oder Abregelung. Ein dritter existiert nicht.
+
+| 1 kWh MPPT-Überschuss, Batterie voll | Wert |
+|---|---|
+| wandeln → Eigenverbrauch (0,93 kWh AC) | **0,32 €** |
+| wandeln → Einspeisung | 0,07 € |
+| abregeln | **0,00 €** |
+
+Die 7,1 % Wandlungsverlust kosten 7 % des Werts — sie zu vermeiden kostet 100 %.
+
+| 1 kWh Fronius-Überschuss (AC) | Rechenweg | Wert |
+|---|---|---|
+| einspeisen | 1,0 × 0,07382 | 0,07 € |
+| **Batterie laden** | 0,94 × 0,93 × 0,3494 | **0,31 €** |
+
+Faktor 4,4 zugunsten des Ladens → die Lader-Zuschaltung bei schlechtem Wetter ist wirtschaftlich richtig, auch wenn sie die Verlustkennzahl erhöht. Eingespeist wird nur, was die 11,5 kWh nutzbare Kapazität nicht mehr aufnimmt.
+
+**Einziger echter Hebel bleibt der Bereitschaftsverbrauch**, weil er unabhängig vom Durchsatz läuft: 118 W × 24 h = 2,83 kWh/Tag → im Sommer ~76 €/Jahr (frisst nur Einspeisevergütung), im Winter ~361 €/Jahr (frisst Netzstrom). Deshalb ist die offene 110-vs-175-W-Frage praktisch relevant — sie verschiebt diese Zahlen um ein Drittel. Der bekannte Haken bleibt: Die Multis arbeiten ~20 h/Tag, nur ein Bruchteil des Sockels ist abschaltbar.
+
+## 💶 Leerlaufsockel in Euro: Saisonrechnung (18.08.2026)
+
+Ergänzt den Abschnitt *„📌 Für den Winter: Entscheidungsgrundlage Multi-Standby"*. **Saisonaufteilung 8 Monate Sommer / 4 Monate Winter — Setzung Norbert**, plausibel für diese Anlagengröße.
+
+> [!WARNING] Frühere Zahlen richtig lesen
+> Die zuvor genannten „76 €" und „361 €" waren **keine** Sommer-/Winteranteile, sondern zwei Jahres-**Extremfälle**: der Sockel durchgängig zu Einspeisevergütung bzw. durchgängig zu Bezugspreis bewertet. Die Realität liegt dazwischen — erst die Saisonaufteilung macht daraus eine Jahreszahl.
+
+### Belegt: Im Sommer kostet der Sockel nur Einspeisevergütung
+
+| Monat | Netzbezug | Einspeisung |
+|---|---|---|
+| Juli 2026 | **3,89 kWh** | 2.447 kWh |
+| August 2026 (bis 18.) | **2,36 kWh** | 1.596 kWh |
+
+Netzbezug praktisch null → der Leerlauf frisst ausschließlich PV, die sonst eingespeist worden wäre. Bewertung mit 7,382 ct ist für diese Monate **gemessen, nicht geschätzt**. ⚠️ Der Gridmeter-Sensor existiert erst seit Juli 2026, für den Winter fehlen Messdaten.
+
+### Jahreskosten (243 d × 7,382 ct + 122 d × 34,94 ct)
+
+| Sockel | kWh/Jahr | Sommer | Winter | **Jahr** |
+|---|---|---|---|---|
+| **118 W** (Regression 13.–17.08.) | 1.034 | 50,80 € | 120,73 € | **171 €** |
+| **174 W** (Vault-Regression 08.–10.08.) | 1.524 | 74,91 € | 178,04 € | **253 €** |
+
+Die Spanne von 82 € ist exakt die offene Sockelfrage (110 vs. 175 W, s. Abschnitt oben). **Über 70 % der Kosten fallen in einem Drittel des Jahres an** — der Winter dominiert, weil der Bezugspreis das 4,7-fache der Einspeisevergütung ist.
+
+### Hebbar ist nur der Winteranteil — und dort nur die echten Standby-Stunden
+
+| Standby-Stunden/Tag (Winter) | bei 118 W | bei 174 W |
+|---|---|---|
+| 4 h | 20 € | 30 € |
+| 8 h | 40 € | 59 € |
+| **12 h** | 60 € | **89 €** |
+
+Die bisher notierten **65–70 €/Jahr** entsprechen grob **12 Standby-Stunden/Tag beim hohen Sockelwert** — also der optimistischen Ecke beider Unsicherheiten. Realistisch ist eher die Mitte der Tabelle.
+
+### ⬜ Messplan für den kommenden Winter
+
+Beide offenen Fragen brauchen dieselben Daten und lassen sich in einem Aufwasch klären:
+
+1. **Sockelhöhe:** Stunden mit Durchsatz ≈ 0 sammeln und direkt mitteln, statt aus Lastdaten zu extrapolieren.
+2. **Hebbare Stunden:** Stunden zählen, in denen AC-Abgabe ≈ 0 **und gleichzeitig Netzbezug** läuft — das ist die Zeit, in der die Batterie leer ist, das Haus am Netz hängt und der Multi nutzlos im Leerlauf steht. Genau diese Stunden sind das Sparpotenzial.
+
+Erst danach ist die Standby-Entscheidung belastbar. Vorher gilt: Im Sommer lohnt Abschalten ohnehin nicht (kostet nur Einspeisevergütung).
+
+---
+
+## Runbook: Home Assistant von außen (NPM-Proxy, Alexa-Skill)
+
+→ Verschoben nach [[homelab-infrastruktur#Netzwerk-Vorfall 18.08.2026 und Fernzugriff]] (23.08.2026).
+

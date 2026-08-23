@@ -37,6 +37,7 @@ Ich betreibe, überwache und erweitere eine eigene PV-/Speicher-Anlage und verbi
 ## Verbundene Projekte
 
 - [[02 Projekte/victron_node_red|Victron Node-RED]] — Node-RED-Flows, HA-Integration, Anlagen-Topologie, Wartungsanleitung, alle laufenden Auswertungen
+- [[02 Projekte/Brauchwasser-Wärmepumpe|Brauchwasser-Wärmepumpe]] — Stillstandsverlust der BW-WP, Stufentest und Zirkulations-Umbau (aus dem Victron-Projekt ausgelagert)
 - [[02 Projekte/homelab-monitoring|homelab-monitoring]] — Grafana/InfluxDB-Monitoring für Energieverbrauch (aktuell zwei Klimaanlagen), Ergänzung zum HA-Energie-Dashboard aus dem Victron-Projekt
 - [[02 Projekte/bwt|bwt]] — Flutter-App als digitale Bedienungsanleitung für Brauchwasser-Wärmepumpen (ecodesign/Wolf)
 - [[02 Projekte/Energielandingpage|Energielandingpage]] — veröffentlichter Artikel „Die Energierevolution die wir brauchen", live unter [energie.softexceptions.com](https://energie.softexceptions.com)
