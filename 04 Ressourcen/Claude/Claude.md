@@ -40,7 +40,12 @@ Claude ist ein großes Sprachmodell (LLM), das ich für verschiedenste Entwicklu
 
 ## Neues Projekt starten
 
-→ [[04 Ressourcen/Claude/Neues Projekt anlegen]]
+→ [[04 Ressourcen/Claude/Neues Projekt anlegen]] — Symlink, CLAUDE.md, Vault-Notiz
+→ [[Projektvorlage]] — Gerüst für die Projektnotiz im Vault
+
+## Arbeitsweisen
+
+- [[Excalidraw-Workflow]] — Diagramme **abschnittsweise** aufbauen, nie das ganze JSON auf einmal
 
 ## Meine Erkenntnisse
 

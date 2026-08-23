@@ -37,6 +37,10 @@ MCP ist ein Standard-Protokoll, das es ermöglicht, Claude mit externen Systemen
 3. Claude kann jetzt auf diese Ressourcen zugreifen
 4. Workflows automatisieren
 
+## Server im Einsatz
+
+- [[context7]] — lädt aktuelle Library-Doku direkt in den Kontext, statt sich auf Trainingswissen zu verlassen
+
 ## Ressourcen
 
 - [MCP Dokumentation](https://modelcontextprotocol.io)

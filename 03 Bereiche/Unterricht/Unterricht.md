@@ -33,6 +33,25 @@ Ziel: Absolventen:innen, die nicht nur Code schreiben können, sondern auch:
 - Ethische Fragen stellen
 - Ihre eigene Rolle im verändernden Arbeitsmarkt verstehen
 
+## Unterrichtsmaterialien
+
+**Lehreinheiten**
+- [[OOP-in-Rust]] — Ist Rust objektorientiert? Kapselung und Traits statt Vererbung, am Fallbeispiel [[StreamPrometh]]
+- [[Sprachwahl-begründen-StreamPrometh]] — wie man die Wahl einer Programmiersprache begründet, gleiches Fallbeispiel
+- [[Vue-Fehlerbehandlung]] — warum jeder `async`-Call ein `try/catch/finally` braucht
+- [[Ansible]] — entstanden beim Deployment der [[Notenerfassung_IT|Notenerfassung IT]]
+
+**Diagramme** (aus der eigenen Anlage abgeleitet — reale Beispiele statt Lehrbuchfälle)
+- [[MQTT-Bridge-Diagramm]] — Cerbo GX ↔ Proxmox, aus [[Victron Anlage]]
+- [[openWB-Abschaltvorgang]] — warum Strom fließt, obwohl der Status „inaktiv" meldet
+- [[OOP-Konzept-Zerlegung-Diagramm]] — die vier trennbaren Konzepte hinter „OOP", visualisiert zu [[OOP-in-Rust]]
+- [[REST-API-Architektur]] — REST-Architektur für Anwendungsentwickler:innen
+
+**Didaktik und Planung**
+- [[Lehrplan-KI]] — Lehrplanstruktur unter KI-Integration
+- [[Schüler-Onboarding]] — wie Schüler:innen verantwortungsvoll mit Claude anfangen
+- [[Auswirkungen-KI]] — Auswirkungen auf Beruf und Gesellschaft, Grundlage für die Ethik-Einheiten
+
 ## Verbundene Projekte
 
 - [[02 Projekte/Ausbilder-Landingpage|Ausbilder-Landingpage]] — Kommunikation mit Betrieben

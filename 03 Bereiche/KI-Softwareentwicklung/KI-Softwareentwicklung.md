@@ -12,11 +12,12 @@ Dieser Bereich umfasst alles rund um die Entwicklung von Software mit modernen K
 
 ## Aktuelle Fokus-Themen
 
-- **SOLID-Prinzipien mit KI** — Wie bleibt Code wartbar und skalierbar bei KI-Unterstützung?
-- **Agenten-Engineering** — Aufbau und Orchestrierung von AI Agents für Entwicklung
+- **[[SOLID-Prinzipien]] mit KI** — Wie bleibt Code wartbar und skalierbar bei KI-Unterstützung?
+- **[[Agent-Engineering|Agenten-Engineering]]** — Aufbau und Orchestrierung von AI Agents für Entwicklung
 - **Code-Qualität** — Standards unter KI-Einsatz halten
-- **Tool-Auswahl** — GSD vs. PAUL: Wann welcher Ansatz?
-- **Skills-Entwicklung** — Benutzerdefinierte Skills für spezifische Aufgaben
+- **Tool-Auswahl** — [[GSD-vs-PAUL|GSD vs. PAUL]]: Wann welcher Ansatz?
+- **Skills-Entwicklung** — Benutzerdefinierte Skills für spezifische Aufgaben ([[Skills]])
+- **[[LLM Knowledge Bases]]** — Karpathys Einschätzung zu RAG und Wissensdatenbanken für LLMs
 
 ## Workflow-Verbesserungen
 

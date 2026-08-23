@@ -26,15 +26,15 @@ Skills sind spezialisierte, wiederverwendbare Funktionalitäten für Claude. Sie
 
 | Skill | Aufruf | Funktion |
 |---|---|---|
-| vue-solid | `/vue-solid` | Vue 3 + TypeScript, SOLID-Architektur |
-| python-solid | `/python-solid` | Python + FastAPI, Clean Architecture |
-| flutter-solid | `/flutter-solid` | Flutter + Dart, Clean Architecture |
-| rust-solid | `/rust-solid` | Rust, SOLID + Clean Architecture |
-| java-solid | `/java-solid` | Java + Spring Boot, Clean Architecture |
-| csharp-solid | `/csharp-solid` | C# + ASP.NET Core, Clean Architecture |
-| tdd | `/tdd` | Test-Driven Development (Python, Vue, Flutter, Rust, Java, C#) |
-| get-shit-done | `npx get-shit-done-cc@latest` | Workflow-Struktur, verhindert Kontextverlust |
-| paul | `npx paul-framework` | Planungs-Framework für komplexe Projekte |
+| [[04 Ressourcen/Skills/vue-solid/SKILL\|vue-solid]] | `/vue-solid` | Vue 3 + TypeScript, SOLID-Architektur |
+| [[04 Ressourcen/Skills/python-solid/SKILL\|python-solid]] | `/python-solid` | Python + FastAPI, Clean Architecture |
+| [[04 Ressourcen/Skills/flutter-solid/SKILL\|flutter-solid]] | `/flutter-solid` | Flutter + Dart, Clean Architecture |
+| [[04 Ressourcen/Skills/rust-solid/SKILL\|rust-solid]] | `/rust-solid` | Rust, SOLID + Clean Architecture |
+| [[04 Ressourcen/Skills/java-solid/SKILL\|java-solid]] | `/java-solid` | Java + Spring Boot, Clean Architecture |
+| [[04 Ressourcen/Skills/csharp-solid/SKILL\|csharp-solid]] | `/csharp-solid` | C# + ASP.NET Core, Clean Architecture |
+| [[04 Ressourcen/Skills/tdd/SKILL\|tdd]] | `/tdd` | Test-Driven Development (Python, Vue, Flutter, Rust, Java, C#) |
+| [[get-shit-done]] | `npx get-shit-done-cc@latest` | Workflow-Struktur, verhindert Kontextverlust |
+| [[paul]] | `npx paul-framework` | Planungs-Framework für komplexe Projekte |
 
 ### Design-Skills (System-Skills, kein Symlink nötig)
 
@@ -43,7 +43,7 @@ Skills sind spezialisierte, wiederverwendbare Funktionalitäten für Claude. Sie
 | ui-ux-pro-max | `/ui-ux-pro-max` | UI/UX für Web + Mobile inkl. Flutter — 50+ Stile, 161 Paletten, 99 UX-Richtlinien |
 | frontend-design | `/frontend-design` | Hochwertige Web-Interfaces — Komponenten, Layouts, Poster |
 
-Symlink-Befehle für neue Projekte: siehe jeweilige Referenz-Notiz im Skill-Ordner.
+Symlink-Befehle für neue Projekte: siehe die jeweils verlinkte Referenz-Notiz in der Tabelle oben.
 
 ## Installierte Agenten
 
