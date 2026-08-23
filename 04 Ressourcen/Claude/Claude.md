@@ -31,7 +31,7 @@ Claude ist ein großes Sprachmodell (LLM), das ich für verschiedenste Entwicklu
 - [[Claude Code]] — IDE-Integration
 - [[MCP|Model Context Protocol]] — Externe Tools und Datenquellen
 - [[Skills]] — Benutzerdefinierte Fähigkeiten
-- [[Agenten|Agent Engineering]] — Autonome Systeme
+- [[Agenten-Engineering|Agent Engineering]] — Autonome Systeme
 
 ## Ressourcen & Links
 
